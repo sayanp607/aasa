@@ -1,0 +1,146 @@
+/* Modal background */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal container */
+.modal > div {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: slideIn 0.3s ease;
+}
+
+/* Input styling */
+.modal input {
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+/* Button styling */
+.modal button {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  transition: background 0.3s;
+}
+
+.modal button:hover {
+  background-color: #0056b3;
+}
+
+/* Link and text */
+.modal span {
+  color: #007bff;
+  font-weight: 500;
+}
+
+.modal h2 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.modal p {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+/* Slide-in animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive tweaks */
+@media (max-width: 480px) {
+  .modal > div {
+    padding: 1.5rem;
+  }
+
+  .modal h2 {
+    font-size: 1.25rem;
+  }
+
+  .modal input,
+  .modal button {
+    font-size: 0.95rem;
+  }
+}
+.modal input {
+  width: 90%;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  background-color: white;  
+  color: #000;              
+  caret-color: #000;      
+  -webkit-text-fill-color: #000;
+}
+.authbtn{
+  background-color: green  !important;
+  width: 60% !important;
+}
+.authbtnadmin{
+  background-color: red !important;
+  width: 60% !important;
+}
+.logintxt{
+  color: black;
+}
+
+/* Add or update this inside Auth.css */
+
+.modal-container {
+  position: relative;
+}
+
+/* Top-right X close button */
+.modal-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: none;
+  border: 2px solid black;
+   width: 32px;
+  height: 42px;
+  border-radius:20%;
+  font-size: 1.5rem;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+  color: #000;
+}

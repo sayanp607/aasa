@@ -1,0 +1,100 @@
+/* Full page container */
+.admin-orders-container {
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #1f1c2c, #928dab);
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* Heading style */
+.admin-orders-heading {
+  font-size: 32px;
+  margin-bottom: 30px;
+  color: #ffb347;
+  text-shadow: 0 0 10px #fff, 0 0 20px #ffb347;
+  text-align: center;
+}
+
+/* Table container for responsive design */
+.admin-orders-table-wrapper {
+  width: 100%;
+  max-width: 1400px;
+  overflow-x: auto;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+}
+
+/* Main table style */
+.admin-orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  box-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+/* Header row style */
+.admin-orders-table thead {
+  background: linear-gradient(to right, #ff512f, #dd2476);
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.admin-orders-table th, .admin-orders-table td {
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+}
+
+/* Alternate row color */
+.admin-orders-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Select dropdown */
+.status-select {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(to right, #24c6dc, #514a9d);
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(24, 198, 220, 0.6);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.status-select:hover {
+  transform: scale(1.1);
+}
+
+/* Shipping info box */
+.shipping-info {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .admin-orders-heading {
+    font-size: 24px;
+  }
+
+  .admin-orders-table {
+    font-size: 12px;
+  }
+
+  .status-select {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}

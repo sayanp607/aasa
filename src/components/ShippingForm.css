@@ -1,0 +1,77 @@
+/* Fullscreen overlay */
+.shipping-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+/* Form container */
+.shipping-form-container {
+  background: linear-gradient(to right, #283048, #859398);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.8);
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: popup 0.4s ease;
+}
+
+/* Popup animation */
+@keyframes popup {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Form title */
+.shipping-form-title {
+  font-size: 26px;
+  color: #fff;
+  margin-bottom: 25px;
+  text-shadow: 0 0 10px rgba(255,255,255,0.4);
+}
+
+/* Input fields */
+.shipping-input {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+/* Submit button */
+.shipping-submit-btn {
+  margin-top: 20px;
+  padding: 12px 25px;
+  font-size: 18px;
+  color: #fff;
+  background: linear-gradient(to right, #56ab2f, #a8e063);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  transition: transform 0.2s ease;
+}
+
+.shipping-submit-btn:hover {
+  transform: scale(1.1);
+}

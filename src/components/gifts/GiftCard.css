@@ -1,0 +1,32 @@
+.gift-card-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 5px !important; /* ✅ This adds vertical space between buttons */
+  margin-top: 10px;
+}
+
+.buy-btn,
+.add-btn {
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}
+
+/* Buy Button */
+.buy-btn {
+  background-color: #007bff;
+}
+
+.buy-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Add to Cart Button */
+.add-btn {
+  background-color: #28a745;
+}

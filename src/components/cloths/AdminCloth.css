@@ -1,0 +1,212 @@
+.admin-container {
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  min-height: 100vh;
+  color: #333;
+  font-family: 'Poppins', sans-serif;
+  box-sizing: border-box;
+}
+
+.admin-title {
+  font-size: 35px;
+  text-align: center;
+  margin-bottom: 40px;
+  color: #333;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+}
+
+.admin-form {
+  background: #fff;
+  padding: 35px 25px;
+  border-radius: 12px;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.admin-form h4 {
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.admin-form input[type="text"],
+.admin-form input[type="number"],
+.admin-form select,
+.admin-form input[type="file"] {
+  width: 90%;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  color: #333;
+  font-size: 16px;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.admin-form input:focus,
+.admin-form select:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 10px rgba(74, 144, 226, 0.3);
+  outline: none;
+}
+
+::placeholder {
+  color: #aaa;
+}
+
+.size-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  width: 90%;
+}
+
+.size-row select,
+.size-row input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  color: #333;
+}
+
+.size-row button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 8px;
+  background: #4a90e2;
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.size-row button:hover {
+  background: #357ab8;
+  transform: scale(1.05);
+}
+
+.admin-form .btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 30px;
+  background: #4caf50;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  margin: 10px 0;
+  width: 200px;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.admin-form .btn:hover {
+  background: #43a047;
+  transform: scale(1.05);
+}
+
+.inputimg {
+  margin-top: 15px;
+  width: 90%;
+}
+
+.admin-cloth-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.admin-cloth-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-align: center;
+  color: #333;
+}
+
+.admin-cloth-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+}
+
+.admin-cloth-card img {
+  width: 100%;
+  height: 200px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-bottom: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.admin-cloth-card h4 {
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.admin-cloth-card p {
+  margin-bottom: 10px;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.admin-cloth-card ul {
+  padding-left: 20px;
+  margin: 10px 0;
+  text-align: left;
+}
+
+.admin-cloth-card li {
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.card-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  justify-content: center;
+}
+
+.card-actions button {
+  flex: 1;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  background: #4a90e2;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.card-actions button:hover {
+  background: #357ab8;
+  transform: scale(1.05);
+}
+
+/* Responsive Tweaks */
+@media (max-width: 600px) {
+  .admin-form input,
+  .size-row select,
+  .size-row input,
+  .inputimg {
+    width: 100%;
+  }
+
+  .admin-form .btn {
+    width: 100%;
+  }
+}

@@ -1,0 +1,96 @@
+.dashboard-container {
+  padding: 30px;
+  max-width: 600px;
+  margin: auto;
+  background: #f4f8fb;
+  font-family: "Poppins", sans-serif;
+  min-height: 100vh;
+}
+
+h2 {
+  text-align: center;
+  color: #0072ff;
+  margin-bottom: 20px;
+  font-size: 24px;
+  letter-spacing: 0.5px;
+}
+
+.order-form {
+  background: #fff;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.order-form h4 {
+  margin-top: 15px;
+  color: #333;
+  font-size: 16px;
+}
+
+.order-form input,
+.order-form select,
+.order-form button {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: box-shadow 0.2s ease;
+}
+
+.order-form input:focus,
+.order-form select:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 114, 255, 0.3);
+}
+
+.order-form button {
+  background: #0072ff;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.order-form button:hover {
+  background: #005bb5;
+}
+
+button.orders-btn {
+  padding: 10px 15px;
+  background: #28a745;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button.orders-btn:hover {
+  background: #218838;
+}
+
+input[type="checkbox"] {
+  width: auto;
+  margin-right: 5px;
+}
+
+@media (max-width: 480px) {
+  .dashboard-container {
+    padding: 15px;
+  }
+  .order-form {
+    padding: 15px;
+  }
+  button.orders-btn {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}

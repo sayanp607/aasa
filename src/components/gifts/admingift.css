@@ -1,0 +1,231 @@
+* {
+  box-sizing: border-box;
+}
+
+.admin-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+  padding: 30px 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f9f9f9;
+  min-height: 100vh;
+}
+
+.admin-container h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.category-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.category-buttons button {
+  background: #eee;
+  padding: 10px 18px;
+  border-radius: 25px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #333;
+}
+
+.category-buttons button:hover {
+  background: #ddd;
+}
+
+.category-buttons button.active {
+  background-color: #ff7f27;
+  color: white;
+  box-shadow: 0 4px 10px rgba(255, 127, 39, 0.4);
+}
+
+.search-bar-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.gift-form-container {
+  max-width: 500px;
+  margin: 0 auto 40px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.gift-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.gift-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  width: 280px;
+  padding: 15px;
+  text-align: center;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s;
+}
+
+.gift-card:hover {
+  transform: translateY(-5px);
+}
+
+.gift-card img {
+  width: 100%;
+  max-height: 150px;
+  object-fit: contain;
+  border-radius: 10px;
+  margin: 0 auto 10px auto;
+}
+
+.gift-card h4 {
+  margin: 10px 0 5px;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.gift-card p {
+  margin-bottom: 10px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.edit-btn,
+.delete-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 48%;
+  font-size: 0.9rem;
+}
+
+.edit-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #0056b3;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #a81f30;
+}
+
+/* Responsive Tweaks */
+@media (max-width: 768px) {
+  .gift-card {
+    width: 45%;
+  }
+}
+
+@media (max-width: 480px) {
+  .gift-card {
+    width: 90%;
+  }
+
+  .category-buttons button {
+    padding: 8px 14px;
+    font-size: 0.85rem;
+  }
+}
+.gift-form-container {
+  max-width: 500px;
+  margin: 0 auto 40px auto;
+  background: white;
+  padding: 25px 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.gift-form-container:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
+}
+
+.gift-form-container h3 {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.gift-form-container label {
+  display: block;
+  margin-bottom: 6px;
+  color: #555;
+  font-weight: 500;
+}
+
+.gift-form-container input,
+.gift-form-container select,
+.gift-form-container textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: #fff !important;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  color: #000;
+  font-weight: bold;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  font-size: 1rem;
+}
+
+.gift-form-container input:focus,
+.gift-form-container select:focus,
+.gift-form-container textarea:focus {
+  border-color: #007bff;
+  background-color: #ccc !important;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+  outline: none;
+}
+
+.gift-form-container textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.gift-form-container .submit-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem;
+  width: 100%;
+  transition: background 0.3s;
+  margin-top: 10px;
+}
+
+.gift-form-container .submit-btn:hover {
+  background-color: #218838;
+}
