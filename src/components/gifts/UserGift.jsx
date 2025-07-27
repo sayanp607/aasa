@@ -87,7 +87,6 @@ const handlePayment = async () => {
       handler: async (response) => {
         alert("Payment successful!");
 
-        // ✅ Only place order, no manual stock reduction here
         await axios.post(`${API_BASE_URL}/api/order/place-gift-order`, {
           giftId: buyingGift._id,
           amount: total,

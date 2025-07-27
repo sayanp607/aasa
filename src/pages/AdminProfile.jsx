@@ -99,7 +99,9 @@ export default function AdminPanel() {
   return (
     <div className="dashboard-container">
       <h2>Admin Panel - Manage Orders</h2>
-
+  <button onClick={() => navigate("/")} className="back-home-btn">
+        ⬅ Back to Home
+      </button>
       <div className="filters">
         <input name="address" placeholder="Search by Address" value={filters.address} onChange={handleFilterChange} />
         <input

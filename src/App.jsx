@@ -23,6 +23,8 @@ import AdminPanel from './pages/AdminProfile';
 import MyOrders from './pages/MyOrders';
 import CartPage from './pages/CartPage';
 import ContactUs from './pages/ContactUs';
+import ProtectedRoute from './components/ProtectedRoute';
+import Delivery from './pages/Delivery';
 
 function App() {
   return(
@@ -40,13 +42,34 @@ function App() {
         <Route path="/user/profile" element={<UserProfilePickup />} />
         <Route path="/driver/register" element={<DriverRegister />} />
         <Route path="/driver/login" element={<DriverLogin />} />
-        <Route path="/book" element={<BookRide />} />
-        <Route path="/driver/dashboard" element={<DriverDashboard />} />
+        <Route path="/book" element={
+  <ProtectedRoute allowedRoles={['user']}>
+    <BookRide/>
+  </ProtectedRoute>
+} />
+        <Route path="/dashboard" element={
+  <ProtectedRoute allowedRoles={['user']}>
+    <Dashboard/>
+  </ProtectedRoute>
+} />
+
+<Route path="/driver/dashboard" element={
+  <ProtectedRoute allowedRoles={['admin', 'driver']}>
+    <DriverDashboard />
+  </ProtectedRoute>
+} />
+<Route path="/admin" element={
+  <ProtectedRoute allowedRoles={['admin', 'driver']}>
+    <AdminPanel/>
+  </ProtectedRoute>
+} />
+        {/* <Route path="/book" element={<BookRide />} /> */}
+        {/* <Route path="/driver/dashboard" element={<DriverDashboard />} /> */}
         <Route path="/pickup" element={<Home />} />
-        <Route path="/delivery" element={<Login />} />
+        <Route path="/delivery" element={<Delivery />} />
       <Route path="/delivery-register" element={<Register />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/admin" element={<AdminPanel />} />
+      {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+      {/* <Route path="/admin" element={<AdminPanel />} /> */}
       <Route path="/myorders" element={<MyOrders />} />
       <Route path="/cart" element={<CartPage />} />
       <Route path="/contact" element={<ContactUs />} />

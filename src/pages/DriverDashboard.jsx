@@ -3,6 +3,7 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import { API_BASE_URL } from "../main";
 import "./DriverDashboard.css";
+import { useNavigate } from "react-router-dom";
 
 const authHeader = () => {
   const token = localStorage.getItem("token");
@@ -16,6 +17,7 @@ export default function DriverDashboard() {
   const [rejectedRides, setRejectedRides] = useState([]);
   const [activeTab, setActiveTab] = useState("pending");
 
+const navigate = useNavigate(); 
   const socket = useRef(null);
 
   useEffect(() => {
@@ -75,16 +77,23 @@ export default function DriverDashboard() {
     });
   };
 
-  const handleAccept = async (rideId, userId) => {
-    try {
-      await axios.post(`${API_BASE_URL}/api/rides/accept/${rideId}`, {}, { headers: authHeader() });
-      fetchRides();
-      shareLocation(userId);
-    } catch (err) {
-      alert(err.response?.data?.error || "Failed to accept ride");
-      fetchRides();
-    }
-  };
+const handleAccept = async (rideId, userId) => {
+  const adminPhone = localStorage.getItem("adminPhone") || "N/A";
+
+  try {
+    await axios.post(
+      `${API_BASE_URL}/api/rides/accept/${rideId}`,
+      { phone: adminPhone },  // include phone number in body
+      { headers: authHeader() }
+    );
+    fetchRides();
+    shareLocation(userId);
+  } catch (err) {
+    alert(err.response?.data?.error || "Failed to accept ride");
+    fetchRides();
+  }
+};
+
 
   const handleComplete = async (rideId) => {
     try {
@@ -119,6 +128,10 @@ export default function DriverDashboard() {
   return (
     <div className="dashboard-container">
       <h2>Driver Dashboard</h2>
+      
+ <button onClick={() => navigate("/")} className="back-home-btn">
+        ⬅ Back to Home
+      </button>
 
       <div className="tab-container">
         <button

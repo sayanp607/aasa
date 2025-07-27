@@ -78,3 +78,15 @@ button:hover {
     flex-direction: column;
   }
 }
+.back-home-btn {
+  margin-bottom: 20px;
+  background-color: #4a90e2;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.back-home-btn:hover {
+  background-color: #357ac9;
+}

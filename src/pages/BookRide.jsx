@@ -10,6 +10,7 @@ export default function BookRide() {
   const [pickup, setPickup] = useState("");
   const [drop, setDrop] = useState("");
   const [pickupCoords, setPickupCoords] = useState(null);
+  const [locationPopupDismissed, setLocationPopupDismissed] = useState(false);
   const [dropCoords, setDropCoords] = useState(null);
   const [vehicleType, setVehicleType] = useState("");
   const [price, setPrice] = useState(null);
@@ -378,6 +379,9 @@ return (
   <div className="bookride-container">
     <div className="bookride-header">
       <h2>Book Your Ride</h2>
+       <button onClick={() => navigate("/")} className="back-home-btn">
+        ⬅ Back to Home
+      </button>
       <div className="profile-section" onClick={() => navigate("/user/profile")}>
         <FaUserCircle className="profile-icon" />
         <p className="profile-text">My Profile</p>
@@ -388,7 +392,12 @@ return (
 <input
   ref={pickupRef}
   placeholder="Pickup Location"
-  onFocus={() => setShowLocationPopup(true)}
+ onFocus={() => {
+  if (!hasAutoFilledLocation && !locationPopupDismissed) {
+    setShowLocationPopup(true);
+  }
+}}
+
 /><br />
 
 {showLocationPopup && (
@@ -402,7 +411,13 @@ return (
         }}>
           ✅ Use My Location
         </button>
-        <button onClick={() => setShowLocationPopup(false)}>❌ Cancel</button>
+       <button onClick={() => {
+  setShowLocationPopup(false);
+  setLocationPopupDismissed(true); // ✅ prevent showing popup again
+}}>
+  ❌ Cancel
+</button>
+
       </div>
     </div>
   </div>

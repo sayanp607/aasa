@@ -157,6 +157,9 @@ const calculatePrice = () => {
     <div className="dashboard-container">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
   <h2>Create New Order</h2>
+    <button onClick={() => navigate("/")} className="back-home-btn">
+        ⬅ Back to Home
+      </button>
   <button onClick={() => navigate("/myorders")} className="orders-btn">
     My Orders 📦
   </button>
