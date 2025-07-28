@@ -25,6 +25,13 @@ import CartPage from './pages/CartPage';
 import ContactUs from './pages/ContactUs';
 import ProtectedRoute from './components/ProtectedRoute';
 import Delivery from './pages/Delivery';
+import Adventure from './pages/Adventure';
+import HomeAdv from './pages/adventures/Home';
+import Admin from './pages/adventures/Admin';
+import TripDetail from './pages/adventures/TripDetails';
+import ConfirmationPage from './pages/adventures/ConfirmatioPage';
+import CheckoutPage from './pages/adventures/CheckoutPage';
+import TripCartPage from './pages/adventures/CartPage';
 
 function App() {
   return(
@@ -52,6 +59,16 @@ function App() {
     <Dashboard/>
   </ProtectedRoute>
 } />
+        <Route path="/adventurehome" element={
+  <ProtectedRoute allowedRoles={['user']}>
+    <HomeAdv/>
+  </ProtectedRoute>
+} />
+        <Route path="/adventureadmin" element={
+  <ProtectedRoute allowedRoles={['admin']}>
+    <Admin/>
+  </ProtectedRoute>
+} />
 
 <Route path="/driver/dashboard" element={
   <ProtectedRoute allowedRoles={['admin', 'driver']}>
@@ -66,6 +83,11 @@ function App() {
         {/* <Route path="/book" element={<BookRide />} /> */}
         {/* <Route path="/driver/dashboard" element={<DriverDashboard />} /> */}
         <Route path="/pickup" element={<Home />} />
+        <Route path="/adventures" element={<Adventure/>} />
+        <Route path="/trip/:id" element={<TripDetail/>} />
+        <Route path="/tripcart" element={<TripCartPage/>} />
+        <Route path="/confirmation/:orderId" element={<ConfirmationPage/>} />
+        <Route path="/checkout" element={<CheckoutPage/>} />
         <Route path="/delivery" element={<Delivery />} />
       <Route path="/delivery-register" element={<Register />} />
       {/* <Route path="/dashboard" element={<Dashboard />} /> */}

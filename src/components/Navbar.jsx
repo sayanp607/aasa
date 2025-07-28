@@ -67,7 +67,7 @@ const Navbar = ({ onLoginClick }) => {
 </a>
 
 
-        {!isLoggedIn ? (
+        {/* {!isLoggedIn ? (
           <button onClick={onLoginClick} className="login-button">
             Login
           </button>
@@ -75,7 +75,7 @@ const Navbar = ({ onLoginClick }) => {
           <button onClick={handleLogout} className="login-button">
             Logout
           </button>
-        )}
+        )} */}
 
         <FaShoppingCart
           className="cart-icon"
@@ -103,7 +103,7 @@ const Navbar = ({ onLoginClick }) => {
 </a>
 
 
-          {!isLoggedIn ? (
+          {/* {!isLoggedIn ? (
             <button onClick={onLoginClick} className="login-button mobile-visible">
               Login
             </button>
@@ -111,7 +111,7 @@ const Navbar = ({ onLoginClick }) => {
             <button onClick={handleLogout} className="login-button mobile-visible">
               Logout
             </button>
-          )}
+          )} */}
 
           <FaShoppingCart
             className="cart-icon mobile-visible"

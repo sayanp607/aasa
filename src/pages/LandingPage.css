@@ -1,7 +1,7 @@
 /* Entire page respects fixed navbar */
 .landing-container {
   margin-top: 60px;
-  background: linear-gradient(to right, #e8b1b1, #b1b1e7);
+ background-color: #2d004d;
   min-height: 100vh;
   padding: 20px;
   box-sizing: border-box;
@@ -30,13 +30,13 @@
 .cards-section h1 {
   font-size: 2.7rem;
   margin-bottom: 1rem;
-  color: #090808;
+  color: #d6d4d4;
   text-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
 }
 
 .cards-section p {
   font-size: 1.2rem;
-  color: #000000;
+  color: #aaa8a8;
   margin-bottom: 2rem;
 }
 
@@ -174,5 +174,134 @@
 
   .card-icon {
     height: 130px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cards-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .card-item {
+    max-width: 100%;
+  }
+
+  .cards-container a {
+    max-width: 100%;
+  }
+
+  .card-icon {
+    height: 110px;
+  }
+
+  .card-text {
+    font-size: 0.95rem;
+    padding: 0.6rem;
+  }
+}
+
+.delivery-box {
+  background-color: #fff;
+  border: 3px solid #3d1fff;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+  color: #000;
+  margin: 20px auto;
+  max-width: 500px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.delivery-title {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #111;
+}
+
+.delivery-categories {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-bottom: 5px;
+}
+
+.delivery-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 8px;
+  width: 60px;
+}
+
+.delivery-item img {
+  width: 80px;
+  height: 50px;
+  border-radius: 10px;
+  object-fit: contain;
+  margin-bottom: 5px;
+}
+
+.delivery-label {
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.delivery-note {
+  font-size: 15px !important;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.login-button {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.login-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* NEW FLEX LAYOUT for large screens */
+@media (min-width: 769px) {
+  .top-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+  }
+
+  .video-section {
+    flex: 1;
+  }
+
+  .cards-section {
+    flex: 1;
+    text-align: left;
+  }
+
+  .cards-section h1 {
+    font-size: 2.5rem;
+    margin-top: 0;
+  }
+
+  .delivery-box {
+    margin-left: 0;
+    max-width: 100%;
+  }
+
+  .cards-container {
+    margin-top: 50px;
+    padding: 0 10px;
   }
 }
