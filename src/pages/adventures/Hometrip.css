@@ -1,0 +1,144 @@
+/* Hero Section */
+.hero-section {
+  width: 100%;
+  background-image: url('/leaf.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.hero-text {
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 20px 30px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.hero-text h1 {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.hero-text p {
+  font-size: 20px;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0d3b66;
+  color: white;
+  padding: 10px 20px;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.nav-links a {
+  margin-left: 20px;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* Card Grid */
+.trip-list {
+  padding: 40px 20px;
+  background-color: white;
+}
+
+.trip-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 20px;
+  overflow-x: auto;
+  justify-content: center;
+}
+
+.trip-card {
+  flex: 0 0 250px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.trip-card:hover {
+  transform: translateY(-5px);
+}
+
+.card-image-wrapper {
+  position: relative;
+}
+
+.trip-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.featured-tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #e63946;
+  color: white;
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.trip-location {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.trip-details {
+  padding: 15px;
+  text-align: center;
+}
+
+.trip-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.rating-reviews {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 10px;
+}
+
+.price-container {
+  margin-bottom: 10px;
+}
+
+.price-label {
+  color: #555;
+  margin-right: 5px;
+}
+
+.trip-price {
+  color: #28a745;
+  font-weight: bold;
+}
+

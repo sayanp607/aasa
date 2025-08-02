@@ -1,0 +1,147 @@
+.about-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: 'Arial', sans-serif;
+  background-color: #fff;
+}
+
+/* Top image row */
+.about-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.about-item {
+  flex: 1;
+  min-width: 300px;
+  max-width: 32%;
+  text-align: center;
+}
+
+.about-item img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.about-section-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  text-align: left;
+  color: #222;
+}
+
+.about-item p {
+  white-space: pre-wrap;
+  font-size: 1rem;
+  text-align: justify;
+}
+
+/* YouTube Video */
+.about-video-section {
+  /* background-color: #f8f9fa; */
+  padding: 3rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.video-heading {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #222;
+}
+
+.about-video {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  max-width: auto;
+  margin: 0 auto;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.about-video iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 90%;
+  border-radius: 10px;
+}
+
+/* Horizontal Scroll Gallery */
+.scroll-gallery {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  margin-bottom: 3rem;
+  padding-bottom: 1rem;
+}
+
+.scroll-gallery img {
+  height: 500px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  width: 1000px;
+}
+
+/* Leadership Team */
+.leadership {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.leadership h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.team-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.team-member {
+  max-width: 200px;
+  text-align: center;
+}
+
+.team-member img {
+  width: 100%;
+  border-radius: 50%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.team-member h4 {
+  margin: 1rem 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.team-member p {
+  color: #666;
+}
+
+.hero-image-wrapper {
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 3rem;
+}
+
+.hero-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  display: block;
+}

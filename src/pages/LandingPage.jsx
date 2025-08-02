@@ -164,6 +164,12 @@ const LandingPage = () => {
               <div className="card-text">Delivery Service</div>
             </div>
           </Link>
+            <Link to="/adventures">
+    <div className="card-item theme-pickup">
+      <img src="/adventures.jpg" alt="Pickup Service" className="card-icon" />
+      <div className="card-text">Adventures</div>
+    </div>
+  </Link>
         </div>
       </main>
 

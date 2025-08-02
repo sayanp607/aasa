@@ -1,63 +1,102 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { API_BASE_URL } from '../../main';
+import './Hometrip.css';
 
 function Home() {
-  const [trips, setTrips] = useState([]);
-  const [filters, setFilters] = useState({
-    region: '',
-    difficulty: '',
-    date: ''
-  });
-
-  const handleChange = e => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
-  };
-
-  const handleSearch = async e => {
-    e.preventDefault();
-    try {
-      const res = await axios.post(`${API_BASE_URL}/api/trips/search`, filters);
-      setTrips(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    axios.get(`${API_BASE_URL}/api/trips`)
-      .then(res => setTrips(res.data))
-      .catch(err => console.error(err));
-  }, []);
+  const trips = [
+    {
+      _id: '1',
+      image: '/bandaje.jpg',
+      title: 'Bandaje Falls Trek',
+      location: 'Uttarakhand',
+      price: 4999,
+      rating: 4.5,
+      reviews: 120,
+      route: '/activity/Bandaje-Falls-Trek'
+    },
+    {
+      _id: '2',
+      image: '/netravati.jpg',
+      title: 'Netravati Trek: Experience the Beauty of the Western Ghats',
+      location: 'Uttarakhand',
+      price: 6499,
+      rating: 4.5,
+      reviews: 120,
+      route: '/activity/Netravati-Trek'
+    },
+    {
+      _id: '3',
+      image: '/monsoons.jpg',
+      title: 'MONSOONS IN MALENADU',
+      location: 'Himachal Pradesh',
+      price: 7499,
+      rating: 4.5,
+      reviews: 120,
+      route: '/activity/monsoons-in-malendu'
+    },
+    {
+      _id: '4',
+      image: '/waterfall.jpg',
+      title: 'Waterfall Rappelling Expeditions',
+      location: 'Maharashtra',
+      price: 3999,
+      rating: 4.5,
+      reviews: 120,
+      route: '/activity/waterfall-rappelling-expeditions'
+    },
+  ];
 
   return (
-    <div>
-      <h1>Available Trips</h1>
+    <div className="home-container">
+      <header className="navbar">
+        <div className="logo">HighHawks</div>
+        <nav className="nav-links">
+          <Link to="/adventurehome">Home</Link>
+          <Link to="/activity">Activities</Link>
+          <Link to="/blog">Blog</Link>
+          <Link to="/about">About Us</Link>
+          <Link to="/gallery">Gallery</Link>
+        </nav>
+      </header>
 
-      <form onSubmit={handleSearch}>
-        <input type="text" name="region" placeholder="Region" onChange={handleChange} />
-        <select name="difficulty" onChange={handleChange}>
-          <option value="">-- Difficulty --</option>
-          <option value="Easy">Easy</option>
-          <option value="Medium">Medium</option>
-          <option value="Difficult">Difficult</option>
-        </select>
-        <input type="date" name="date" onChange={handleChange} />
-        <button type="submit">Search</button>
-      </form>
+      <section className="hero-section">
+        <div className="hero-text">
+          <h1>HighHawks</h1>
+          <p>Explore thrilling adventures</p>
+        </div>
+      </section>
 
-      <div className="trip-list">
-        {trips.map(trip => (
-          <div key={trip._id} className="trip-card">
-            <img src={trip.image} alt={trip.title} width="200" />
-            <h2>{trip.title}</h2>
-            <p>Location: {trip.location}</p>
-            <p>Price: ₹{trip.discountPrice || trip.price}</p>
-            <Link to={`/trip/${trip._id}`}>View Details</Link>
-          </div>
-        ))}
-      </div>
+      <section className="trip-list">
+        <h2>Top Activities</h2>
+        <div className="trip-grid">
+          {trips.map((trip) => (
+         <div key={trip._id} className="activity-card">
+  <div className="activity-card-img">
+    <span className="tag">Featured</span>
+    <img src={trip.image} alt={trip.title} />
+    <div className="card-badge">
+      <img src="/aasa.jpg" alt="badge" />
+    </div>
+    <div className="activity-location">{trip.location}</div>
+  </div>
+  <div className="activity-card-details">
+    <Link to={trip.route} className="activity-title-link">
+      <h3>{trip.title}</h3>
+    </Link>
+    <div className="rating-reviews">
+      <span className="stars">⭐ {trip.rating}</span>
+      <span className="reviews">({trip.reviews} reviews)</span>
+    </div>
+    <div className="price-container">
+      <span className="price-label">⚡ from</span>
+      <span className="price">₹{trip.price}</span>
+    </div>
+  </div>
+</div>
+
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

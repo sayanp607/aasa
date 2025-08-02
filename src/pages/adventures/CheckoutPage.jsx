@@ -21,11 +21,20 @@ const total = items.reduce((sum, i) => sum + (i.tripPrice * i.userNames.length),
     setCustomer({ ...customer, [e.target.name]: e.target.value });
   };
 
-  const handleOrder = async e => {
-    e.preventDefault();
-    const res = await axios.post(`${API_BASE_URL}/api/triporder`, { customer, items, totalAmount: total, });
-    navigate(`/confirmation/${res.data._id}`);
-  };
+
+const handleOrder = async e => {
+  e.preventDefault();
+  const user = JSON.parse(localStorage.getItem('user'));  // 👈 Get user
+
+  const res = await axios.post(`${API_BASE_URL}/api/triporder`, {
+    userId: user.id, // 👈 Add this
+    customer,
+    items,
+    totalAmount: total,
+  });
+
+  navigate(`/confirmation/${res.data._id}`);
+};
 
   return (
     <div>

@@ -8,11 +8,9 @@ export default function Adventure() {
   useEffect(() => {
     const role = localStorage.getItem("role");
 
-    if (role === "user") {
+    if (role === "user" || role==="admin") {
       navigate("/adventurehome");
-    } else if (role === "admin") {
-      navigate("/adventureadmin");
-    }
+    } 
   }, [navigate]);
 
   return (
