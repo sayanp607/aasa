@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Professional White & Sky Blue Palette */
+  --primary: #0ea5e9;
+  --primary-glow: rgba(14, 165, 233, 0.25);
+  --secondary: #0284c7;
+  --accent: #f43f5e;
+  --bg-dark: #ffffff;
+  --bg-darker: #f0f7ff;
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  
+  /* Light Glass Tokens */
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(14, 165, 233, 0.12);
+  --glass-blur: blur(12px);
+  --glass-shadow: 0 4px 24px rgba(14, 165, 233, 0.08);
+  
+  /* Transitions */
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  background-color: var(--bg-darker);
+  color: var(--text-main);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Premium Glass Container */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  box-shadow: var(--glass-shadow);
+}
+
+/* Stunning Gradient Text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Micro-animations */
+.hover-lift {
+  transition: var(--transition-bounce);
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+.btn-premium {
+  padding: 12px 28px;
+  border-radius: 300px;
+  border: none;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 15px var(--primary-glow);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-premium:hover {
+  box-shadow: 0 8px 25px var(--primary-glow);
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-darker);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
+
+/* =============================================
+   GLOBAL LIGHT MODE OVERRIDES
+   Forces ALL pages to use the white/blue theme
+   ============================================= */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-darker) !important;
+  color: var(--text-main) !important;
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+  overflow-x: hidden;
+}
+
+/* Global heading styles */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-main);
+}
+
+/* Global paragraph / text styles */
+p, span, label, li, td, th {
+  color: var(--text-muted);
+}
+
+strong, b {
+  color: var(--text-main);
+}
+
+/* Global link styles */
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+a:hover {
+  color: var(--secondary);
+}
+
+/* Global input/select/textarea light mode */
+input, select, textarea {
+  background: #ffffff !important;
+  color: var(--text-main) !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-family: inherit;
+  transition: var(--transition-smooth);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 4px var(--primary-glow) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Fix option elements in dropdowns */
+select option {
+  background-color: #ffffff !important;
+  color: var(--text-main) !important;
+}
+
+/* Global button */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+/* Disabled button */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Focus outlines */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

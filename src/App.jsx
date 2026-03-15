@@ -18,8 +18,9 @@ import UserProfilePickup from './pages/UserProfile';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Dashboard from './pages/DeliveryUserProfile';
-import AdminPanel from './pages/AdminProfile';
+// Removed legacy Dashboard import
+// Removed legacy Dashboard import
+// Removed redundant AdminPanel import
 import MyOrders from './pages/MyOrders';
 import CartPage from './pages/CartPage';
 import ContactUs from './pages/ContactUs';
@@ -44,7 +45,7 @@ import WildWaterfallRappelling from './pages/activities/WildWaterfall';
 import Gokarna from './pages/activities/Gokarna';
 import Valleys from './pages/activities/Valleys';
 import Trek from './pages/activities/Trek';
-import ActivityPage from './pages/adventures/Acrivity';
+import ActivityPage from './pages/adventures/Activity';
 import BlogPage from './pages/adventures/Blog';
 import Blog1 from './pages/adventures/Blogs/Blog1';
 import Blog4 from './pages/adventures/Blogs/Blog4';
@@ -58,10 +59,25 @@ import Blog9 from './pages/adventures/Blogs/blog9';
 import Blog10 from './pages/adventures/Blogs/Blog10';
 import AboutPage from './pages/adventures/About';
 import Gallery from './pages/adventures/Gallery';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return(
-    <Routes>
+    <>
+      <ToastContainer 
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <Routes>
       <Route path='/' element={<LandingPage/>} />
       <Route path='/profile' element={<UserProfile/>} />
       <Route path='/admin-profile' element={<AdminOrders/>} />
@@ -78,11 +94,6 @@ function App() {
         <Route path="/book" element={
   <ProtectedRoute allowedRoles={['user']}>
     <BookRide/>
-  </ProtectedRoute>
-} />
-        <Route path="/dashboard" element={
-  <ProtectedRoute allowedRoles={['user']}>
-    <Dashboard/>
   </ProtectedRoute>
 } />
         <Route path="/adventurehome" element={
@@ -103,7 +114,7 @@ function App() {
 } />
 <Route path="/admin" element={
   <ProtectedRoute allowedRoles={['admin', 'driver']}>
-    <AdminPanel/>
+    <MyOrders/>
   </ProtectedRoute>
 } />
 <Route path="/admin/orders" element={
@@ -134,8 +145,6 @@ function App() {
         <Route path="/checkout" element={<CheckoutPage/>} />
         <Route path="/delivery" element={<Delivery />} />
       <Route path="/delivery-register" element={<Register />} />
-      {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-      {/* <Route path="/admin" element={<AdminPanel />} /> */}
       <Route path="/myorders" element={<MyOrders />} />
       <Route path="/cart" element={<CartPage />} />
       <Route path="/contact" element={<ContactUs />} />
@@ -156,6 +165,7 @@ function App() {
     
 
     </Routes>
+    </>
   ) 
 }
 

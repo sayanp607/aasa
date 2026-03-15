@@ -4,6 +4,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { FaHome } from "react-icons/fa";
 import { MdAccountCircle,MdEmail } from "react-icons/md";
+import { toast } from 'react-toastify';
 const Navbar = ({ onLoginClick }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -31,7 +32,7 @@ const Navbar = ({ onLoginClick }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     setIsLoggedIn(false);
-    alert("Logged out successfully");
+    toast.success("Logged out successfully");
     window.location.reload();
   };
 

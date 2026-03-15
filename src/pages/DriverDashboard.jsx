@@ -4,6 +4,7 @@ import { io } from "socket.io-client";
 import { API_BASE_URL } from "../main";
 import "./DriverDashboard.css";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 const authHeader = () => {
   const token = localStorage.getItem("token");
@@ -38,7 +39,7 @@ const navigate = useNavigate();
     setupSocket();
 
     socket.current.on("ride_cancelled_by_user", (data) => {
-      alert(`Ride ${data.rideId} is cancelled by user`);
+      toast.info(`Ride ${data.rideId} is cancelled by user`);
       fetchRides();
     });
 
@@ -67,7 +68,7 @@ const navigate = useNavigate();
   };
 
   const shareLocation = (userId) => {
-    if (!navigator.geolocation) return alert("Geolocation not supported");
+    if (!navigator.geolocation) return toast.error("Geolocation not supported");
     navigator.geolocation.watchPosition((position) => {
       const coords = {
         lat: position.coords.latitude,
@@ -89,7 +90,7 @@ const handleAccept = async (rideId, userId) => {
     fetchRides();
     shareLocation(userId);
   } catch (err) {
-    alert(err.response?.data?.error || "Failed to accept ride");
+    toast.error(err.response?.data?.error || "Failed to accept ride");
     fetchRides();
   }
 };
@@ -98,9 +99,10 @@ const handleAccept = async (rideId, userId) => {
   const handleComplete = async (rideId) => {
     try {
       await axios.post(`${API_BASE_URL}/api/rides/complete/${rideId}`, {}, { headers: authHeader() });
+      toast.success("Ride completed successfully");
       fetchRides();
     } catch (err) {
-      alert(err.response?.data?.error || "Failed to complete ride");
+      toast.error(err.response?.data?.error || "Failed to complete ride");
       fetchRides();
     }
   };
@@ -108,9 +110,10 @@ const handleAccept = async (rideId, userId) => {
   const handleReject = async (rideId) => {
     try {
       await axios.post(`${API_BASE_URL}/api/rides/reject/${rideId}`, {}, { headers: authHeader() });
+      toast.info("Ride rejected");
       fetchRides();
     } catch (err) {
-      alert(err.response?.data?.error || "Failed to reject ride");
+      toast.error(err.response?.data?.error || "Failed to reject ride");
       fetchRides();
     }
   };
@@ -118,9 +121,10 @@ const handleAccept = async (rideId, userId) => {
   const handleDelete = async (rideId) => {
     try {
       await axios.delete(`${API_BASE_URL}/api/rides/delete/${rideId}`, { headers: authHeader() });
+      toast.info("Ride deleted");
       fetchRides();
     } catch (err) {
-      alert(err.response?.data?.error || "Failed to delete ride");
+      toast.error(err.response?.data?.error || "Failed to delete ride");
       fetchRides();
     }
   };

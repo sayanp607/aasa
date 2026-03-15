@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { API_BASE_URL } from "../main";
 import { useNavigate } from "react-router-dom";
+import { FaMapMarkerAlt, FaCar, FaRoute, FaRupeeSign, FaClock, FaHistory, FaArrowLeft, FaShieldAlt } from 'react-icons/fa';
 import "./UserProfile.css";
 
 export default function UserProfilePickup() {
@@ -30,11 +31,24 @@ export default function UserProfilePickup() {
 
   return (
     <div className="profile-container">
-      <div className="profile-header">
-        <h2>My Ride History</h2>
-        <button className="back-btn" onClick={() => navigate("/book")}>
-          Back to Booking
-        </button>
+      <div className="profile-header-section">
+        <div className="header-top">
+           <button className="back-btn-pill" onClick={() => navigate("/book")}>
+            <FaArrowLeft /> Back to Booking
+          </button>
+        </div>
+        <h2 className="profile-main-title">Ride History</h2>
+        <p className="profile-subtitle">Track your recent journeys and mobility stats</p>
+      </div>
+
+      <div className="history-stats-overview">
+         <div className="history-stat">
+            <FaHistory className="stat-icon" />
+            <div className="stat-data">
+               <label>Total Rides</label>
+               <span>{rides.length}</span>
+            </div>
+         </div>
       </div>
 
       {rides.length === 0 ? (
@@ -42,23 +56,57 @@ export default function UserProfilePickup() {
       ) : (
         rides.map((ride) => (
           <div className="ride-card" key={ride._id}>
-            <p><strong>Pickup:</strong> {ride.pickupAddress}</p>
-            <p><strong>Drop:</strong> {ride.dropAddress}</p>
-            <p><strong>Vehicle Type:</strong> {ride.vehicleType || "N/A"}</p>
-            <p><strong>Distance:</strong> {ride.totalDistance} km</p>
-            <p><strong>Price:</strong> ₹{ride.totalPrice}</p>
-            <p><strong>Date:</strong> {new Date(ride.createdAt).toLocaleString()}</p>
+            <div className="ride-card-header">
+               <div className="vehicle-info">
+                  <FaCar className="vehicle-icon" />
+                  <span>{ride.vehicleType || "Ride"}</span>
+               </div>
+               <span className={`status-pill ${ride.status.toLowerCase()}`}>
+                  {ride.status}
+               </span>
+            </div>
 
-            <p>
-              <strong>Status:</strong>{" "}
-              {ride.status === "Pending" && <span className="status pending">Pending</span>}
-              {ride.status === "Accepted" && <span className="status accepted">Accepted</span>}
-              {ride.status === "Rejected" && <span className="status rejected">Rejected</span>}
-              {ride.status === "Completed" && <span className="status completed">Completed</span>}
-            </p>
+            <div className="route-flow">
+               <div className="route-point pickup">
+                  <FaMapMarkerAlt className="marker" />
+                  <div className="point-text">
+                     <label>Pickup</label>
+                     <p>{ride.pickupAddress}</p>
+                  </div>
+               </div>
+               <div className="route-line"></div>
+               <div className="route-point drop">
+                  <FaMapMarkerAlt className="marker" />
+                  <div className="point-text">
+                     <label>Drop</label>
+                     <p>{ride.dropAddress}</p>
+                  </div>
+               </div>
+            </div>
 
-            {ride.otp && <p><strong>OTP:</strong> {ride.otp}</p>}
-            {ride.driverId && <p><strong>Driver ID:</strong> {ride.driverId}</p>}
+            <div className="ride-metrics-grid">
+               <div className="metric-item">
+                  <FaRoute />
+                  <span>{ride.totalDistance} km</span>
+               </div>
+               <div className="metric-item">
+                  <FaRupeeSign />
+                  <span>{ride.totalPrice}</span>
+               </div>
+               <div className="metric-item">
+                  <FaClock />
+                  <span>{new Date(ride.createdAt).toLocaleDateString()}</span>
+               </div>
+            </div>
+
+            <div className="ride-card-footer">
+               {ride.otp && (
+                  <div className="otp-badge">
+                     <FaShieldAlt /> <span>OTP: {ride.otp}</span>
+                  </div>
+               )}
+               <span className="timestamp">{new Date(ride.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+            </div>
           </div>
         ))
       )}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../../main';
 import "./AdminOrders.css";
+import { toast } from 'react-toastify';
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -24,10 +25,10 @@ const AdminOrders = () => {
       await axios.patch(`${API_BASE_URL}/api/order/update-status/${orderId}`, { status: newStatus }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      alert('Order status updated');
+      toast.success('Order status updated');
       fetchOrders();
     } catch (err) {
-      alert(err?.response?.data?.message || 'Failed to update status');
+      toast.error(err?.response?.data?.message || 'Failed to update status');
     }
   };
 

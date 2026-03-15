@@ -3,19 +3,30 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./orders.css";
 import { API_BASE_URL } from "../main";
+import { 
+  FaBox, 
+  FaMapMarkerAlt, 
+  FaCalendarAlt, 
+  FaWeightHanging, 
+  FaClock, 
+  FaTrash, 
+  FaArrowLeft, 
+  FaShieldAlt, 
+  FaTruck, 
+  FaSearch, 
+  FaUserShield,
+  FaFilter
+} from "react-icons/fa";
+import { toast } from "react-toastify";
 
 export default function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
+  const [isAdminView, setIsAdminView] = useState(false);
+  const [role] = useState(localStorage.getItem("role") || "user");
   const [filters, setFilters] = useState({
     address: "",
     deliveryType: "",
-    weightMin: "",
-    weightMax: "",
-    valueMin: "",
-    valueMax: "",
-    priceMin: "",
-    priceMax: "",
     status: "",
     date: "",
   });
@@ -24,9 +35,13 @@ export default function MyOrders() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (!token) navigate("/login");
+    if (!token) {
+      toast.error("Please login to view orders");
+      navigate("/user/login");
+      return;
+    }
     fetchOrders();
-  }, []);
+  }, [isAdminView]);
 
   useEffect(() => {
     applyFilters();
@@ -34,18 +49,19 @@ export default function MyOrders() {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/orders/my`, {
+      const endpoint = isAdminView ? `${API_BASE_URL}/api/orders/all` : `${API_BASE_URL}/api/orders/my`;
+      const res = await axios.get(endpoint, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOrders(res.data);
     } catch (err) {
-      alert("Failed to load orders");
+      toast.error("Failed to load orders");
     }
   };
 
   const handleDelete = async (id, status) => {
     if (status !== "Pending" && status !== "Assigned") {
-      alert("You can only delete orders with Pending or Assigned status");
+      toast.warning("Only Pending or Assigned orders can be deleted");
       return;
     }
     if (!window.confirm("Are you sure to delete this order?")) return;
@@ -54,9 +70,22 @@ export default function MyOrders() {
       await axios.delete(`${API_BASE_URL}/api/orders/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      toast.success("Order deleted successfully");
       fetchOrders();
     } catch {
-      alert("Failed to delete order");
+      toast.error("Failed to delete order");
+    }
+  };
+
+  const handleUpdateStatus = async (id, newStatus) => {
+    try {
+      await axios.put(`${API_BASE_URL}/api/orders/${id}/status`, { status: newStatus }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success(`Status updated to ${newStatus}`);
+      fetchOrders();
+    } catch {
+      toast.error("Failed to update status");
     }
   };
 
@@ -65,141 +94,192 @@ export default function MyOrders() {
     setFilters({ ...filters, [name]: value });
   };
 
- const applyFilters = () => {
-  const filtered = orders.filter((order) => {
-    const addressMatch =
-      order.pickup.address.toLowerCase().includes(filters.address.toLowerCase()) ||
-      order.delivery[0].address.toLowerCase().includes(filters.address.toLowerCase());
+  const applyFilters = () => {
+    const filtered = orders.filter((order) => {
+      const addressMatch =
+        order.pickup.address.toLowerCase().includes(filters.address.toLowerCase()) ||
+        order.delivery[0].address.toLowerCase().includes(filters.address.toLowerCase());
 
-    const typeMatch = filters.deliveryType ? order.deliveryType === filters.deliveryType : true;
+      const typeMatch = filters.deliveryType ? order.deliveryType === filters.deliveryType : true;
+      const statusMatch = filters.status ? order.status === filters.status : true;
+      const dateMatch = filters.date
+        ? new Date(order.createdAt).toLocaleDateString("en-CA") === filters.date
+        : true;
 
-    const weight = parseFloat(order.packageWeight) || 0;
-    const weightMatch =
-      (!filters.weightMin || weight >= parseFloat(filters.weightMin)) &&
-      (!filters.weightMax || weight <= parseFloat(filters.weightMax));
+      return addressMatch && typeMatch && statusMatch && dateMatch;
+    });
+    setFilteredOrders(filtered);
+  };
 
-    const value = parseFloat(order.parcelValue) || 0;
-    const valueMatch =
-      (!filters.valueMin || value >= parseFloat(filters.valueMin)) &&
-      (!filters.valueMax || value <= parseFloat(filters.valueMax));
-
-    const price = parseFloat(order.price) || 0;
-    const priceMatch =
-      (!filters.priceMin || price >= parseFloat(filters.priceMin)) &&
-      (!filters.priceMax || price <= parseFloat(filters.priceMax));
-
-    const statusMatch = filters.status ? order.status === filters.status : true;
-
-const dateMatch = filters.date
-  ? new Date(order.createdAt).toLocaleDateString("en-CA") === filters.date
-  : true;
-
-
-    return addressMatch && typeMatch && weightMatch && valueMatch && priceMatch && statusMatch && dateMatch;
-  });
-
-  setFilteredOrders(filtered);
-};
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Pending': return '#f59e0b';
+      case 'Assigned': return '#0ea5e9';
+      case 'PickedUp': return '#8b5cf6';
+      case 'Delivered': return '#22c55e';
+      default: return '#94a3b8';
+    }
+  };
 
   return (
-    <div className="orders-container">
-      <button onClick={() => navigate("/dashboard")} className="back-btn">
-        ⬅ Back to Dashboard
-      </button>
-      <h2>Your Orders</h2>
+    <div className="orders-wrapper">
+      <div className="orders-header-section">
+        <button onClick={() => navigate("/")} className="premium-back-btn">
+          <FaArrowLeft /> Home
+        </button>
+        
+        <div className="orders-title-block">
+          <h2>{isAdminView ? "Command Center" : "Your Logistics Log"}</h2>
+          <p>{isAdminView ? "System-wide dispatched orders" : "Real-time updates on your deliveries"}</p>
+        </div>
 
-      <div className="filters">
-        <input
-          name="address"
-          placeholder="Search by Address"
-          value={filters.address}
-          onChange={handleFilterChange}
-        />
-        <input
-  name="date"
-  type="date"
-  value={filters.date}
-  onChange={handleFilterChange}
-/>
+        {role === 'admin' && (
+          <button 
+            className={`admin-toggle-btn ${isAdminView ? 'active' : ''}`}
+            onClick={() => setIsAdminView(!isAdminView)}
+          >
+            <FaUserShield /> {isAdminView ? "Switch to Personal" : "Switch to Admin Hub"}
+          </button>
+        )}
+      </div>
 
+      <div className="orders-filters-glass">
+        <div className="search-box">
+          <FaSearch className="filter-icon" />
+          <input
+            name="address"
+            placeholder="Search by address or route..."
+            value={filters.address}
+            onChange={handleFilterChange}
+          />
+        </div>
+        
+        <div className="filter-grid">
+          <div className="filter-item">
+            <FaCalendarAlt className="filter-icon" />
+            <input name="date" type="date" value={filters.date} onChange={handleFilterChange} />
+          </div>
 
-        <select name="deliveryType" value={filters.deliveryType} onChange={handleFilterChange}>
-          <option value="">All Types</option>
-          <option value="Now">Now</option>
-          <option value="EndOfDay">End Of Day</option>
-          <option value="Scheduled">Scheduled</option>
-        </select>
+          <div className="filter-item">
+            <FaClock className="filter-icon" />
+            <select name="deliveryType" value={filters.deliveryType} onChange={handleFilterChange}>
+              <option value="">All Types</option>
+              <option value="Now">Now</option>
+              <option value="EndOfDay">End Of Day</option>
+              <option value="Scheduled">Scheduled</option>
+            </select>
+          </div>
 
-        <input name="weightMin" type="number" placeholder="Min Weight (kg)" onChange={handleFilterChange} />
-        <input name="weightMax" type="number" placeholder="Max Weight (kg)" onChange={handleFilterChange} />
-
-        <input name="valueMin" type="number" placeholder="Min Parcel Value" onChange={handleFilterChange} />
-        <input name="valueMax" type="number" placeholder="Max Parcel Value" onChange={handleFilterChange} />
-
-        <input name="priceMin" type="number" placeholder="Min Price" onChange={handleFilterChange} />
-        <input name="priceMax" type="number" placeholder="Max Price" onChange={handleFilterChange} />
-
-        <select name="status" value={filters.status} onChange={handleFilterChange}>
-          <option value="">All Status</option>
-          <option value="Pending">Pending</option>
-          <option value="Assigned">Assigned</option>
-          <option value="PickedUp">Picked Up</option>
-          <option value="Delivered">Delivered</option>
-        </select>
+          <div className="filter-item">
+            <FaFilter className="filter-icon" />
+            <select name="status" value={filters.status} onChange={handleFilterChange}>
+              <option value="">All Status</option>
+              <option value="Pending">Pending</option>
+              <option value="Assigned">Assigned</option>
+              <option value="PickedUp">Picked Up</option>
+              <option value="Delivered">Delivered</option>
+            </select>
+          </div>
+        </div>
       </div>
 
       {filteredOrders.length === 0 ? (
-        <p>No orders found</p>
+        <div className="no-orders-state animate-fade-in">
+          <FaBox className="empty-icon" />
+          <h3>No dispatches found</h3>
+          <p>Your logistics log is currently empty.</p>
+          <button onClick={() => navigate("/delivery")} className="btn-premium">Dispatch Package</button>
+        </div>
       ) : (
-        <ul className="orders-list">
+        <div className="orders-grid">
           {filteredOrders.map((order) => (
-            <li key={order._id} className="order-card">
-              <p>
-                <strong>Pickup:</strong> {order.pickup.address} ({order.pickup.phone})
-              </p>
-              <p>
-                <strong>Delivery:</strong> {order.delivery[0].address} ({order.delivery[0].phone})
-              </p>
-              <p>
-                <strong>Type:</strong> {order.deliveryType}
-              </p>
-              <p>
-                <strong>Weight:</strong> {order.packageWeight}
-              </p>
-              <p>
-                <strong>Value:</strong> ₹{order.parcelValue}
-              </p>
-              <p>
-                <strong>Price:</strong> ₹{order.price}
-              </p>
-              <p>
-  <strong>Created At:</strong>{" "}
-  {new Date(order.createdAt).toLocaleString()}
-</p>
+            <div key={order._id} className="premium-order-card animate-slide-up">
+              <div className="card-header">
+                <span className="order-id">Logistics ID: {order._id.slice(-6).toUpperCase()}</span>
+                <span className="status-badge" style={{ backgroundColor: getStatusColor(order.status) + '15', color: getStatusColor(order.status) }}>
+                  {order.status}
+                </span>
+              </div>
 
-              <p>
-                <strong>Status:</strong> {order.status}
-              </p>
+              <div className="card-locations">
+                <div className="location-item">
+                  <div className="dot pickup"></div>
+                  <div className="location-info">
+                    <span className="label">PICKUP SOURCE</span>
+                    <p className="address">{order.pickup.address}</p>
+                    <p className="phone"><FaUserShield /> {order.pickup.phone}</p>
+                  </div>
+                </div>
+                <div className="location-item">
+                  <div className="dot drop"></div>
+                  <div className="location-info">
+                    <span className="label">DELIVERY DESTINATION</span>
+                    <p className="address">{order.delivery[0].address}</p>
+                    <p className="phone"><FaUserShield /> {order.delivery[0].phone}</p>
+                  </div>
+                </div>
+              </div>
 
-              {order.image && (
-                <img
-                  src={`${API_BASE_URL}/uploads/${order.image}`}
-                  alt="Order"
-                  className="order-img"
-                />
-              )}
+              <div className="card-footer-grid">
+                <div className="footer-item">
+                  <FaWeightHanging />
+                  <div>
+                    <span className="label">WEIGHT</span>
+                    <p>{order.packageWeight}</p>
+                  </div>
+                </div>
+                <div className="footer-item">
+                  <FaTruck />
+                  <div>
+                    <span className="label">TYPE</span>
+                    <p>{order.deliveryType}</p>
+                  </div>
+                </div>
+                <div className="footer-item">
+                  <FaShieldAlt style={{ color: '#10b981' }} />
+                  <div>
+                    <span className="label">PARCEL VALUE</span>
+                    <p>₹{order.parcelValue || 0}</p>
+                  </div>
+                </div>
+                <div className="footer-item">
+                  <span className="currency">₹</span>
+                  <div>
+                    <span className="label">LOGISTICS FEE</span>
+                    <p className="price-val">{order.price}</p>
+                  </div>
+                </div>
+              </div>
 
-              {(order.status === "Pending" || order.status === "Assigned") && (
-                <button
-                  onClick={() => handleDelete(order._id, order.status)}
-                  className="delete-btn"
-                >
-                  🗑️ Delete
-                </button>
-              )}
-            </li>
+              <div className="card-actions">
+                <div className="time-stamp">
+                   <FaClock /> {new Date(order.createdAt).toLocaleDateString()} at {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
+                
+                <div className="btn-group">
+                  {isAdminView ? (
+                    <select 
+                      className="admin-status-select"
+                      value={order.status}
+                      onChange={(e) => handleUpdateStatus(order._id, e.target.value)}
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Assigned">Assigned</option>
+                      <option value="PickedUp">Picked Up</option>
+                      <option value="Delivered">Delivered</option>
+                    </select>
+                  ) : (
+                    (order.status === "Pending" || order.status === "Assigned") && (
+                      <button onClick={() => handleDelete(order._id, order.status)} className="trash-btn">
+                        <FaTrash /> Cancel Order
+                      </button>
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

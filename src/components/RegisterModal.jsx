@@ -2,16 +2,17 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../main';
 import "./Auth.css"
+import { toast } from 'react-toastify';
 const RegisterModal = ({ onClose }) => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
 
   const handleRegister = async () => {
     try {
       await axios.post(`${API_BASE_URL}/api/user/register`, formData);
-      alert('Registration successful');
+      toast.success('Registration successful');
       onClose();
     } catch (err) {
-      alert(err.response?.data?.message || 'Registration failed');
+      toast.error(err.response?.data?.message || 'Registration failed');
     }
   };
 

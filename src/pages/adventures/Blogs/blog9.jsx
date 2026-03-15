@@ -6,7 +6,7 @@ const Blog9 = () => {
     <div className="blog-post-container">
       {/* Hero Image with Overlay */}
       <div className="blog-hero-image">
-        <img src='/blog9.jpg' alt="Blog Banner" />
+        <img src='https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&q=80&w=1600' alt="Blog Banner" loading="lazy" />
         <div className="blog-hero-overlay">
           <p className="blog-category-date">Highhawks January 16, 2023</p>
           <h1 className="blog-title">

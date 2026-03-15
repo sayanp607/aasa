@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { API_BASE_URL } from '../../main'; // Assuming you use this for editing image preview
+import { API_BASE_URL } from '../../main';
+import { FaUpload, FaImage, FaUndo } from 'react-icons/fa';
 
-const GiftForm = ({ onSubmit, initialData, category }) => {
+const GiftForm = ({ onSubmit, initialData, category, onCancel }) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -22,10 +23,12 @@ const GiftForm = ({ onSubmit, initialData, category }) => {
         image: null
       });
 
-      // Set existing image preview
       if (initialData.image) {
-        setPreviewImage(`${API_BASE_URL}/uploads/${initialData.image}`);
+        setPreviewImage(`${API_BASE_URL}${initialData.image}`);
       }
+    } else {
+      setFormData({ name: '', description: '', price: '', stock: '', image: null });
+      setPreviewImage(null);
     }
   }, [initialData]);
 
@@ -47,52 +50,75 @@ const GiftForm = ({ onSubmit, initialData, category }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const data = new FormData();
     data.append('name', formData.name);
     data.append('description', formData.description);
     data.append('price', formData.price);
     data.append('stock', formData.stock);
     data.append('category', category);
-    if (formData.image) {
-      data.append('image', formData.image);
-    }
-
-    if (initialData && initialData._id) {
-      data.append('_id', initialData._id);
-    }
+    if (formData.image) data.append('image', formData.image);
+    if (initialData && initialData._id) data.append('_id', initialData._id);
 
     await onSubmit(data);
-
-    // Reset form after submission
-    setFormData({
-      name: '',
-      description: '',
-      price: '',
-      stock: '',
-      image: null
-    });
-    setPreviewImage(null);
+    if (!initialData) {
+      setFormData({ name: '', description: '', price: '', stock: '', image: null });
+      setPreviewImage(null);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginTop: '20px', marginBottom: '20px' }}>
-      <input name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
-      <input name="description" placeholder="Description" value={formData.description} onChange={handleChange} />
-      <input type="number" name="price" placeholder="Price" value={formData.price} onChange={handleChange} required />
-      <input type="number" name="stock" placeholder="Stock" value={formData.stock} onChange={handleChange} />
-      <input type="file" accept="image/*" onChange={handleImageChange} />
+    <form onSubmit={handleSubmit} className="gift-executive-form">
+      <div className="form-field">
+        <label>Visual Identity</label>
+        <div className="image-preview-area" onClick={() => document.getElementById('gift-img-input').click()}>
+          {previewImage ? (
+            <img src={previewImage} alt="Gift Preview" />
+          ) : (
+            <div className="placeholder-text">
+              <FaImage size={32} style={{ marginBottom: '8px', opacity: 0.5 }} />
+              <p>Upload Handcrafted Asset</p>
+            </div>
+          )}
+          <input 
+            id="gift-img-input"
+            type="file" 
+            accept="image/*" 
+            onChange={handleImageChange} 
+            style={{ display: 'none' }} 
+          />
+        </div>
+      </div>
 
-      {previewImage && (
-        <img
-          src={previewImage}
-          alt="Gift Preview"
-          style={{ width: '150px', height: '150px', objectFit: 'cover', marginTop: '10px', borderRadius: '5px' }}
-        />
+      <div className="form-field">
+        <label>Item Name</label>
+        <input name="name" placeholder="Name your treasure" value={formData.name} onChange={handleChange} required />
+      </div>
+
+      <div className="form-field">
+        <label>Artisan Description</label>
+        <textarea name="description" placeholder="Describe the story behind this item..." value={formData.description} onChange={handleChange} />
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+        <div className="form-field">
+          <label>Price (₹)</label>
+          <input type="number" name="price" placeholder="Valuation" value={formData.price} onChange={handleChange} required />
+        </div>
+        <div className="form-field">
+          <label>Inventory Count</label>
+          <input type="number" name="stock" placeholder="Units" value={formData.stock} onChange={handleChange} required />
+        </div>
+      </div>
+
+      <button type="submit" className="gift-submit-btn">
+        <FaUpload /> {initialData ? 'Commit Evolution' : 'Add to Collection'}
+      </button>
+
+      {initialData && (
+        <button type="button" className="admin-cat-pill" onClick={onCancel} style={{ marginTop: '0.5rem', width: '100%', border: '1px solid #e2e8f0' }}>
+          <FaUndo /> Discard Changes
+        </button>
       )}
-
-      <br />
-      <button type="submit">{initialData ? 'Update Gift' : 'Add Gift'}</button>
     </form>
   );
 };

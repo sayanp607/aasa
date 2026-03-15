@@ -1,92 +1,126 @@
 .dashboard-container {
-  padding: 20px;
-  max-width: 900px;
-  margin: 0 auto;
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 100px auto 60px;
 }
 
 .tab-container {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
   flex-wrap: wrap;
 }
 
 .tab {
-  padding: 10px 20px;
-  background-color: #f01f0c;
-  border: 1px solid #ccc;
+  padding: 12px 24px;
+  background: #ffffff;
+  border: 1px solid var(--glass-border);
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s;
+  border-radius: 300px;
+  transition: var(--transition-smooth);
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 .tab:hover {
-  background-color: #ddd;
+  background: rgba(14, 165, 233, 0.1);
+  border-color: var(--primary);
+  color: var(--text-main);
 }
 
 .tab.active {
-  background-color: #007bff;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
-  border-color: #007bff;
+  border-color: transparent;
+  box-shadow: 0 4px 15px var(--primary-glow);
 }
 
 .rides-section {
-  margin-top: 20px;
+  margin-top: 2rem;
 }
 
 .ride-card {
-  border: 1px solid #ccc;
-  padding: 15px;
-  border-radius: 6px;
-  margin-bottom: 15px;
-  background-color: #f9f9f9;
+  border: 1px solid var(--glass-border);
+  padding: 1.5rem 2rem;
+  border-radius: 20px;
+  margin-bottom: 1.5rem;
+  background: #ffffff;
+  transition: var(--transition-bounce);
+}
+
+.ride-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+}
+
+.ride-card p {
+  color: var(--text-muted);
+  margin: 0.5rem 0;
+}
+
+.ride-card strong {
+  color: var(--text-main);
 }
 
 .ride-card.pending {
-  border-left: 4px solid orange;
+  border-left: 4px solid #fbbf24;
 }
 
 .ride-card.accepted {
-  border-left: 4px solid green;
+  border-left: 4px solid #34d399;
 }
 
 .ride-card.rejected {
-  border-left: 4px solid red;
+  border-left: 4px solid #f87171;
 }
 
-button {
-  margin-right: 10px;
-  padding: 6px 12px;
-  background-color: #007bff;
+.ride-card button {
+  margin-right: 0.75rem;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 300px;
   cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition-smooth);
 }
 
-button:hover {
-  background-color: #0056b3;
+.ride-card button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px var(--primary-glow);
 }
 
 .rejected-status {
-  color: red;
-  font-weight: bold;
+  color: #f87171;
+  font-weight: 700;
+}
+
+.back-home-btn {
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 300px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 15px var(--primary-glow);
+}
+
+.back-home-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px var(--primary-glow);
 }
 
 @media (max-width: 600px) {
   .tab-container {
     flex-direction: column;
   }
-}
-.back-home-btn {
-  margin-bottom: 20px;
-  background-color: #4a90e2;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.back-home-btn:hover {
-  background-color: #357ac9;
+
+  .dashboard-container {
+    padding: 1.5rem;
+    margin-top: 80px;
+  }
 }

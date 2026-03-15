@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../main';
 import './Auth.css';
+import { toast } from 'react-toastify';
 
 const LoginModal = ({ onClose }) => {
   const [email, setEmail] = useState('');
@@ -22,7 +23,7 @@ const LoginModal = ({ onClose }) => {
         return; // Don't login yet
       }
       if (phone.trim() === '') {
-        alert('Phone number is required for admin login');
+        toast.warning('Phone number is required for admin login');
         return;
       }
     }
@@ -39,10 +40,10 @@ const LoginModal = ({ onClose }) => {
       }
 
       window.dispatchEvent(new Event('userLoggedIn'));
-      alert('Login successful');
+      toast.success('Login successful');
       onClose();
     } catch (err) {
-      alert(err.response?.data?.message || 'Login failed');
+      toast.error(err.response?.data?.message || 'Login failed');
     }
   };
 

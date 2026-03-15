@@ -1,0 +1,220 @@
+/* BillingPage.css */
+.billing-container {
+  font-family: 'Outfit', sans-serif;
+  background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=2070');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+  padding: 100px 5% 50px;
+  display: flex;
+  justify-content: center;
+}
+
+.billing-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 3rem;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.billing-form-wrapper, .order-summary-wrapper {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 40px;
+  padding: 3rem;
+  color: white;
+}
+
+.billing-form-wrapper h2, .order-summary-wrapper h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+  letter-spacing: -1px;
+}
+
+.billing-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  margin-left: 5px;
+}
+
+.billing-form input {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 15px 25px;
+  border-radius: 18px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.billing-form input:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #10b981;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+}
+
+.place-order-btn {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 20px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+}
+
+.place-order-btn:hover {
+  background: #059669;
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3);
+}
+
+/* Order Summary */
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.adventure-preview {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.adventure-preview img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 24px;
+}
+
+.adventure-preview h3 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.summary-details {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 24px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.detail-row strong {
+  color: white;
+}
+
+.total-row {
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-row .label {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.total-row .amount {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #10b981;
+}
+
+/* Modal Styling */
+.success-modal {
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 40px !important;
+  padding: 4rem !important;
+  color: white !important;
+  outline: none;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.85) !important;
+  z-index: 2000 !important;
+}
+
+.success-icon {
+    font-size: 5rem;
+    margin-bottom: 2rem;
+    display: block;
+}
+
+.success-modal h2 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin-bottom: 1rem;
+}
+
+.success-modal p {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+}
+
+.success-modal strong {
+  color: #10b981;
+}
+
+.modal-btn {
+  background: white;
+  color: black;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 100px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 2.5rem;
+  transition: all 0.3s ease;
+}
+
+.modal-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 1024px) {
+  .billing-grid {
+    grid-template-columns: 1fr;
+  }
+}

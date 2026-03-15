@@ -3,6 +3,7 @@ import axios from 'axios';
 import { API_BASE_URL } from '../main';
 import ShippingForm from '../components/ShippingForm'; // Adjust if path is different
 import './CartPage.css';
+import { toast } from 'react-toastify';
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -69,9 +70,10 @@ const CartPage = () => {
         data: { userId: user.id, clothId, size }
       });
       setCartItems(prev => prev.filter(item => !(item.clothId._id === clothId && item.size === size)));
+      toast.info("Item removed from cart");
     } catch (err) {
       console.error(err);
-      alert("Failed to remove item");
+      toast.error("Failed to remove item");
     }
   };
 
@@ -83,9 +85,10 @@ const CartPage = () => {
         data: { userId: user.id, giftId }
       });
       setGiftCartItems(prev => prev.filter(item => item.giftId._id !== giftId));
+      toast.info("Gift removed from cart");
     } catch (err) {
       console.error(err);
-      alert("Failed to remove gift");
+      toast.error("Failed to remove gift");
     }
   };
 
@@ -129,7 +132,7 @@ const CartPage = () => {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
 
-        alert('Order placed successfully!');
+        toast.success('Order placed successfully!');
         setSelectedCloth(null);
         setShippingId(null);
         fetchCart();
@@ -169,7 +172,7 @@ const CartPage = () => {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
 
-        alert("Gift order placed!");
+        toast.success("Gift order placed!");
         setSelectedGift(null);
         setGiftShippingInfo(null);
         setGiftQuantity(1);
@@ -186,7 +189,7 @@ const CartPage = () => {
     rzp.open();
   } catch (err) {
     console.error("Payment failed", err);
-    alert("Payment failed");
+    toast.error("Payment failed");
   }
 };
 
@@ -218,7 +221,7 @@ const CartPage = () => {
       <h2>My Cart</h2>
 
       {!isLoggedIn ? (
-        <p style={{ textAlign: 'center', marginTop: '20px', color: '#f00', fontSize: '18px' }}>
+        <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '18px' }}>
           Please login to view your cart.
         </p>
       ) : (
@@ -234,7 +237,7 @@ const CartPage = () => {
   <p>Price: ₹{item.giftId?.price}</p>
   <p>Category: {item.giftId?.category}</p>
 
-  <button onClick={() => handleRemoveGift(item.giftId._id)}>Remove</button>
+  <button className="remove-btn" onClick={() => handleRemoveGift(item.giftId._id)}>Remove</button>
 
 <button
   disabled={item.giftId.stock === 0}
@@ -291,12 +294,15 @@ const CartPage = () => {
         </>
       )}
 
-      <button onClick={() => handleRemoveCloth(cloth._id, selection.size)}>Remove</button>
+      <button className="remove-btn" onClick={() => handleRemoveCloth(cloth._id, selection.size)}>Remove</button>
  <button
   className="buy-button"
   disabled={selection.size && selection.stock === 0}
   onClick={() => {
-    if (!selection.size) return alert('Please select a size first.');
+    if (!selection.size) {
+      toast.warning('Please select a size first.');
+      return;
+    }
     initiateBuy({
       clothId: cloth,
       size: selection.size

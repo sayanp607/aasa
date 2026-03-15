@@ -4,7 +4,9 @@ import { io } from "socket.io-client";
 import { API_BASE_URL } from "../main";
 import { useNavigate } from "react-router-dom";
 import "./BookRide.css";
-import { FaUserCircle } from "react-icons/fa";
+import { toast } from 'react-toastify';
+import { FaUserCircle, FaMapMarkerAlt, FaPhoneAlt, FaMotorcycle, FaCar, FaArrowLeft, FaCheckCircle, FaTimes, FaLocationArrow, FaPaperPlane } from "react-icons/fa";
+import AddressAutocomplete from "../components/AddressAutocomplete";
 
 export default function BookRide() {
   const [pickup, setPickup] = useState("");
@@ -16,17 +18,13 @@ export default function BookRide() {
   const [price, setPrice] = useState(null);
   const [distanceKm, setDistanceKm] = useState(null);
   const [step, setStep] = useState("check");
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [rideStatus, setRideStatus] = useState(() => localStorage.getItem("ride_status"));
   const [otp, setOtp] = useState(() => localStorage.getItem("ride_otp"));
   const [phone, setPhone] = useState("");
   const [hasAutoFilledLocation, setHasAutoFilledLocation] = useState(false);
   const [showLocationPopup, setShowLocationPopup] = useState(false);
 
-
-
   const [driverPhone, setDriverPhone] = useState(() => localStorage.getItem("ride_driver_phone"));
-
 
   const mapContainerRef = useRef(null);
   const map = useRef(null);
@@ -41,7 +39,7 @@ export default function BookRide() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Please login");
+      toast.warning("Please login");
       navigate("/user/login");
       return;
     }
@@ -50,7 +48,7 @@ export default function BookRide() {
       const decoded = JSON.parse(atob(token.split(".")[1]));
       const now = Math.floor(Date.now() / 1000);
       if (decoded.exp && decoded.exp < now) {
-        alert("Session expired, please login again.");
+        toast.error("Session expired, please login again.");
         localStorage.removeItem("token");
         navigate("/user/login");
         return;
@@ -66,17 +64,17 @@ export default function BookRide() {
         localStorage.setItem("ride_otp", data.otp);
         localStorage.setItem("ride_driver_phone", data.driverPhone);
         localStorage.setItem("ride_status", "Accepted");
-        alert(`Ride accepted! OTP: ${data.otp}\nDriver Contact: ${data.driverPhone}`);
+        toast.success(`Ride accepted! OTP: ${data.otp}`);
       });
 
       socket.current.on("ride_rejected", () => {
-        alert("Ride rejected by driver");
+        toast.error("Ride rejected by driver");
         setRideStatus("Rejected");
         localStorage.setItem("ride_status", "Rejected");
       });
 
     } catch {
-      alert("Session invalid, please login again.");
+      toast.error("Session invalid, please login again.");
       localStorage.removeItem("token");
       navigate("/user/login");
     }
@@ -87,178 +85,135 @@ export default function BookRide() {
   }, [navigate]);
 
   useEffect(() => {
+    // Redirect to home if user uses browser back button
+    const handlePopState = () => {
+      navigate("/", { replace: true });
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    
+    // Push a current state so that the next back navigation triggers popstate
+    window.history.pushState(null, null, window.location.pathname);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [navigate]);
+
+  useEffect(() => {
+    let initInterval = setInterval(() => {
+      if (
+        window.google && 
+        window.google.maps && 
+        mapContainerRef.current 
+      ) {
+        console.log("Map Env READY");
+        clearInterval(initInterval);
+        initializeMap();
+      }
+    }, 100);
+
+    return () => clearInterval(initInterval);
+  }, []);
+
+  const initializeMap = () => {
     map.current = new window.google.maps.Map(mapContainerRef.current, {
       center: { lat: 12.9716, lng: 77.5946 },
       zoom: 12,
+      disableDefaultUI: true,
+      styles: [
+        { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
+        { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+      ],
     });
+  };
 
-    const geocoder = new window.google.maps.Geocoder();
-
-    const pickupAuto = new window.google.maps.places.Autocomplete(pickupRef.current);
-    pickupAuto.addListener("place_changed", () => {
-      const place = pickupAuto.getPlace();
-      const coords = {
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
-      };
-
-      setPickup(place.formatted_address);
-      setPickupCoords(coords);
-
+  const updateMarker = (type, coords) => {
+    if (!map.current) return;
+    if (type === "pickup") {
       if (pickupMarker.current) pickupMarker.current.setMap(null);
       pickupMarker.current = new window.google.maps.Marker({
         position: coords,
         map: map.current,
-        label: "P",
+        title: "Pickup",
+        icon: {
+          path: window.google.maps.SymbolPath.CIRCLE,
+          fillColor: '#0ea5e9',
+          fillOpacity: 1,
+          strokeWeight: 2,
+          strokeColor: '#fff',
+          scale: 8
+        }
       });
-
-      map.current.setCenter(coords);
-    });
-
-    const dropAuto = new window.google.maps.places.Autocomplete(dropRef.current);
-    dropAuto.addListener("place_changed", () => {
-      const place = dropAuto.getPlace();
-      const coords = {
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
-      };
-
-      setDrop(place.formatted_address);
-      setDropCoords(coords);
-
+    } else {
       if (dropMarker.current) dropMarker.current.setMap(null);
       dropMarker.current = new window.google.maps.Marker({
         position: coords,
         map: map.current,
-        label: "D",
-      });
-
-      map.current.setCenter(coords);
-    });
-
-    map.current.addListener("click", (event) => {
-      const clickedLatLng = {
-        lat: event.latLng.lat(),
-        lng: event.latLng.lng(),
-      };
-
-      geocoder.geocode({ location: clickedLatLng }, (results, status) => {
-        if (status === "OK" && results[0]) {
-          const address = results[0].formatted_address;
-
-          if (!pickupCoords) {
-            setPickup(address);
-            setPickupCoords(clickedLatLng);
-            pickupRef.current.value = address;
-
-            if (pickupMarker.current) pickupMarker.current.setMap(null);
-            pickupMarker.current = new window.google.maps.Marker({
-              position: clickedLatLng,
-              map: map.current,
-              label: "P",
-            });
-          } else if (!dropCoords) {
-            setDrop(address);
-            setDropCoords(clickedLatLng);
-            dropRef.current.value = address;
-
-            if (dropMarker.current) dropMarker.current.setMap(null);
-            dropMarker.current = new window.google.maps.Marker({
-              position: clickedLatLng,
-              map: map.current,
-              label: "D",
-            });
-          } else {
-            alert("Both Pickup and Drop already set. Clear to select again.");
-          }
-
-          map.current.setCenter(clickedLatLng);
+        title: "Drop",
+        icon: {
+          path: window.google.maps.SymbolPath.CIRCLE,
+          fillColor: '#ef4444',
+          fillOpacity: 1,
+          strokeWeight: 2,
+          strokeColor: '#fff',
+          scale: 8
         }
       });
-    });
-  }, []);
-
- 
-
-useEffect(() => {
-  const fetchPrices = async () => {
-    if (pickupCoords && dropCoords) {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/api/rides/distance`, {
-          params: {
-            pickupLat: pickupCoords.lat,
-            pickupLng: pickupCoords.lng,
-            dropLat: dropCoords.lat,
-            dropLng: dropCoords.lng,
-          },
-        });
-
-        const data = response.data;
-        const km = parseFloat(data.rows[0].elements[0].distance.text.replace(" km", ""));
-        setDistanceKm(km);
-      } catch (err) {
-        console.error(err);
-        alert("Failed to calculate distance");
-      }
     }
+    map.current.setCenter(coords);
   };
 
-  fetchPrices();
-}, [pickupCoords, dropCoords]);
-
-
+  useEffect(() => {
+    const fetchDistance = async () => {
+      if (pickupCoords && dropCoords) {
+        try {
+          const response = await axios.get(`${API_BASE_URL}/api/rides/distance`, {
+            params: {
+              pickupLat: pickupCoords.lat,
+              pickupLng: pickupCoords.lng,
+              dropLat: dropCoords.lat,
+              dropLng: dropCoords.lng,
+            },
+          });
+          const data = response.data;
+          if (data.rows[0].elements[0].status === "OK") {
+            const km = parseFloat(data.rows[0].elements[0].distance.text.replace(" km", ""));
+            setDistanceKm(km);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    };
+    fetchDistance();
+  }, [pickupCoords, dropCoords]);
 
   const getBikePrice = (km) => {
     if (km <= 2) return 34.5;
     if (km <= 5) return 46.5;
     if (km <= 11) return 58.5;
     if (km <= 21) return 74.5;
-    return 74.5 + (Math.ceil(km - 21) * 5); // Optional if distance > 21km
+    return 74.5 + (Math.ceil(km - 21) * 5);
+  };
+
+  const getCarPrice = (km) => {
+    if (km <= 2) return 99;
+    if (km <= 5) return 149;
+    if (km <= 11) return 249;
+    if (km <= 21) return 399;
+    return 399 + (Math.ceil(km - 21) * 15);
   };
 
   const handleAction = async () => {
-    if (!pickupCoords || !dropCoords || !vehicleType) {
-      return alert("Please complete all ride details before booking.");
+    if (!pickupCoords || !dropCoords || !vehicleType || !phone) {
+      return toast.warning("Please complete all details (Locations, Vehicle, and Phone).");
     }
 
     if (step === "check") {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/api/rides/distance`, {
-          params: {
-            pickupLat: pickupCoords.lat,
-            pickupLng: pickupCoords.lng,
-            dropLat: dropCoords.lat,
-            dropLng: dropCoords.lng,
-          },
-        });
-
-        const data = response.data;
-        const km = parseFloat(data.rows[0].elements[0].distance.text.replace(" km", ""));
-        setDistanceKm(km);
-
-        let basePrice;
-
-        if (vehicleType === "bike") {
-          basePrice = getBikePrice(km);
-        } else {
-          basePrice = Math.ceil(km) * 50; // You can update car logic later
-        }
-
+        setStep("book");
+        let basePrice = vehicleType === "bike" ? getBikePrice(distanceKm) : getCarPrice(distanceKm);
         setPrice(basePrice);
-
-        const actualPrice = km <= 5 ? basePrice + 8 : basePrice + 12;
-
-        const confirmPrice = window.confirm(
-          `Distance: ${km.toFixed(2)} km\n` +
-          `Discounted Price: ₹${basePrice}\n` +
-          `Actual Price: ₹${actualPrice}\n\nProceed?`
-        );
-
-        if (confirmPrice) setStep("book");
-      } catch (err) {
-        console.error(err);
-        alert("Failed to calculate distance");
-      }
     } else if (step === "book") {
       try {
         const response = await axios.post(`${API_BASE_URL}/api/rides/book`, {
@@ -269,14 +224,12 @@ useEffect(() => {
           totalDistance: distanceKm.toFixed(2),
           totalPrice: price,
           vehicleType,
-           phone: phone
+          phone: phone
         }, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
-        if (!phone || phone.length < 10) return alert("Please enter a valid phone number.");
 
-
-        alert("Ride booked successfully!");
+        toast.success("Ride booked successfully!");
         localStorage.setItem("ride_id", response.data.rideId);
         localStorage.setItem("ride_status", "Pending");
         setRideStatus("Pending");
@@ -284,22 +237,20 @@ useEffect(() => {
         setPrice(null);
         setDistanceKm(null);
       } catch (err) {
-        console.error(err);
-        alert(err.response?.data?.error || "Failed to book ride");
+        toast.error(err.response?.data?.error || "Failed to book ride");
       }
     }
   };
 
   const handleCancelRide = async () => {
     const rideId = localStorage.getItem("ride_id");
-    if (!rideId) return alert("No ride to cancel");
+    if (!rideId) return;
 
     try {
       await axios.post(`${API_BASE_URL}/api/rides/cancel/${rideId}`, {}, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-
-      alert("Ride cancelled successfully");
+      toast.success("Ride cancelled successfully");
       localStorage.removeItem("ride_id");
       localStorage.removeItem("ride_status");
       setRideStatus(null);
@@ -307,230 +258,199 @@ useEffect(() => {
       setPrice(null);
       setDistanceKm(null);
     } catch (err) {
-      console.error(err);
-      alert("Failed to cancel ride");
+      toast.error("Failed to cancel ride");
     }
   };
-const handleUseMyLocation = () => {
-  if (hasAutoFilledLocation) return; // Prevent repeating
 
-  if (!navigator.geolocation) {
-    alert("Geolocation is not supported by your browser");
-    return;
-  }
+  const handleUseMyLocation = () => {
+    if (!navigator.geolocation) return toast.error("Geolocation not supported");
 
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      const coords = { lat, lng };
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const coords = { lat: position.coords.latitude, lng: position.coords.longitude };
+        const geocoder = new window.google.maps.Geocoder();
+        geocoder.geocode({ location: coords }, (results, status) => {
+          if (status === "OK" && results[0]) {
+            const address = results[0].formatted_address;
+            setPickup(address);
+            setPickupCoords(coords);
+            setHasAutoFilledLocation(true);
+            if (pickupMarker.current) pickupMarker.current.setMap(null);
+            pickupMarker.current = new window.google.maps.Marker({
+                position: coords,
+                map: map.current,
+                icon: { path: window.google.maps.SymbolPath.CIRCLE, fillColor: '#0ea5e9', fillOpacity: 1, strokeWeight: 2, strokeColor: '#fff', scale: 8 }
+            });
+            map.current.setCenter(coords);
+            map.current.setZoom(16);
+          }
+        });
+      },
+      (error) => toast.error("Failed to get location"),
+      { enableHighAccuracy: true }
+    );
+  };
 
-      const geocoder = new window.google.maps.Geocoder();
+  return (
+    <div className="bookride-container">
+      <aside className="booking-hub animate-fade-in">
+        <header className="booking-hub-header">
+           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span className="mobility-tag">Aasa Mobility</span>
+                <div className="profile-section" onClick={() => navigate("/user/profile")}>
+                    <FaUserCircle className="profile-icon" />
+                    <p className="profile-text">Profile</p>
+                </div>
+           </div>
+          <h2>Where would you like to go?</h2>
+        </header>
 
-      geocoder.geocode({ location: coords }, (results, status) => {
-        if (status === "OK" && results[0]) {
-          const address = results[0].formatted_address;
-          setPickup(address);
-          setPickupCoords(coords);
-          pickupRef.current.value = address;
-          setHasAutoFilledLocation(true); // ✅ prevent future auto-calls
+        <section className="booking-section">
+          <div className="section-label"><FaLocationArrow /> Route Discovery</div>
+          <div className="input-group">
+            <AddressAutocomplete
+              placeholder="Pickup Location"
+              initialValue={pickup}
+              icon={FaMapMarkerAlt}
+              onSelect={(data) => {
+                setPickup(data.address);
+                setPickupCoords(data.coords);
+                updateMarker("pickup", data.coords);
+              }}
+            />
+            <AddressAutocomplete
+              placeholder="Drop Location"
+              initialValue={drop}
+              icon={FaMapMarkerAlt}
+              onSelect={(data) => {
+                setDrop(data.address);
+                setDropCoords(data.coords);
+                updateMarker("drop", data.coords);
+              }}
+              className="drop-input"
+            />
+          </div>
+        </section>
 
-          if (pickupMarker.current) pickupMarker.current.setMap(null);
-          pickupMarker.current = new window.google.maps.Marker({
-            position: coords,
-            map: map.current,
-            label: "P",
-          });
+        <section className="booking-section">
+          <div className="section-label"><FaPhoneAlt /> Contact Verification</div>
+          <div className="ride-input-wrapper">
+            <FaPhoneAlt className="input-icon" />
+            <input
+              type="text"
+              placeholder="Your Phone Number"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+          </div>
+        </section>
 
-          map.current.setCenter(coords);
-          map.current.setZoom(16);
-        } else {
-          alert("Could not determine address from your location.");
-        }
-      });
-    },
-    (error) => {
-      console.error(error);
-      switch (error.code) {
-        case error.PERMISSION_DENIED:
-          alert("Please allow location access.");
-          break;
-        case error.POSITION_UNAVAILABLE:
-          alert("Location unavailable.");
-          break;
-        case error.TIMEOUT:
-          alert("Request timed out. Try again.");
-          break;
-        default:
-          alert("Failed to get your location.");
-      }
-    },
-    {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 0,
-    }
-  );
-};
-
-
-
-return (
-  <div className="bookride-container">
-    <div className="bookride-header">
-      <h2>Book Your Ride</h2>
-       <button onClick={() => navigate("/")} className="back-home-btn">
-        ⬅ Back to Home
-      </button>
-      <div className="profile-section" onClick={() => navigate("/user/profile")}>
-        <FaUserCircle className="profile-icon" />
-        <p className="profile-text">My Profile</p>
-      </div>
-    </div>
-
-    <div className="bookride-form">
-<input
-  ref={pickupRef}
-  placeholder="Pickup Location"
- onFocus={() => {
-  if (!hasAutoFilledLocation && !locationPopupDismissed) {
-    setShowLocationPopup(true);
-  }
-}}
-
-/><br />
-
-{showLocationPopup && (
-  <div className="location-popup">
-    <div className="popup-content">
-      <p>Do you want to use your current location as Pickup?</p>
-      <div className="popup-buttons">
-        <button onClick={() => {
-          handleUseMyLocation();
-          setShowLocationPopup(false);
-        }}>
-          ✅ Use My Location
-        </button>
-       <button onClick={() => {
-  setShowLocationPopup(false);
-  setLocationPopupDismissed(true); // ✅ prevent showing popup again
-}}>
-  ❌ Cancel
-</button>
-
-      </div>
-    </div>
-  </div>
-)}
-
-
-      <input ref={dropRef} placeholder="Drop Location" /><br />
-      <input
-  type="text"
-  placeholder="Your Phone Number"
-  value={phone}
-  onChange={(e) => setPhone(e.target.value)}
-/>
-
-
-      {/* VEHICLE DROPDOWN */}
-      <div className="vehicle-dropdown-wrapper">
-        <p style={{ fontWeight: "bold" }}>Select Vehicle Type:</p>
-
-        <div className="dropdown-header" onClick={() => setDropdownOpen(!dropdownOpen)}>
-          {vehicleType ? (
-            <div className="vehicle-option selected">
-              <img src={`/images/${vehicleType}.jpg`} alt={vehicleType} />
-              <span>{vehicleType === "bike" ? "Bike" : "Car"}</span>
+        {distanceKm && (
+          <section className="booking-section animate-slide-up">
+            <div className="section-label"><FaMotorcycle /> Choose Your Vehicle</div>
+            <div className="vehicle-grid">
+              <div 
+                className={`vehicle-card ${vehicleType === "bike" ? "active" : ""}`}
+                onClick={() => setVehicleType("bike")}
+              >
+                <img src="/images/bike.jpg" alt="Bike" />
+                <div className="vehicle-info">
+                  <span className="vehicle-name">Boutique Bike</span>
+                  <span className="vehicle-meta">Est: ₹{getBikePrice(distanceKm)}</span>
+                </div>
+              </div>
+              <div 
+                className={`vehicle-card ${vehicleType === "car" ? "active" : ""}`}
+                onClick={() => setVehicleType("car")}
+              >
+                <img src="/images/car.jpg" alt="Car" />
+                <div className="vehicle-info">
+                  <span className="vehicle-name">Premium Car</span>
+                  <span className="vehicle-meta">Est: ₹{getCarPrice(distanceKm)}</span>
+                </div>
+              </div>
             </div>
-          ) : (
-            <span className="dropdown-placeholder">Choose Vehicle</span>
-          )}
-          <span className="dropdown-arrow">▼</span>
+          </section>
+        )}
+
+        <div className="booking-actions">
+          <button
+            className="primary-ride-btn"
+            onClick={handleAction}
+            disabled={!vehicleType || !pickupCoords || !dropCoords || !phone}
+          >
+           {step === "check" ? <><FaPaperPlane /> Request Pricing</> : <><FaCheckCircle /> Confirm & Book Ride</>}
+          </button>
+
+          <button className="secondary-action-btn" onClick={() => {
+            setPickup(""); setDrop(""); setPickupCoords(null); setDropCoords(null);
+            pickupRef.current.value = ""; dropRef.current.value = "";
+            setDistanceKm(null); setVehicleType(""); setPrice(null); setStep("check");
+          }}>
+            Reset Locations
+          </button>
         </div>
 
-        {dropdownOpen && pickupCoords && dropCoords && distanceKm && (
-          <div className="dropdown-options">
-            {["bike", "car"].map((type) => {
-              const basePrice = type === "bike" ? getBikePrice(distanceKm) : Math.ceil(distanceKm) * 50;
-              const actualPrice = distanceKm <= 5 ? basePrice + 8 : basePrice + 12;
-              return (
-                <div
-                  key={type}
-                  className={`vehicle-option ${vehicleType === type ? "selected" : ""}`}
-                  onClick={() => {
-                    setVehicleType(type);
-                    setPrice(basePrice);
-                    setDropdownOpen(false);
-                    setStep("book");
-                  }}
-                >
-                  <img src={`/images/${type}.jpg`} alt={type} />
-                  <div className="vehicle-details">
-                    <span style={{ fontWeight: "bold" }}>{type === "bike" ? "Bike" : "Car"}</span>
-                    <span>Distance: {distanceKm.toFixed(2)} km</span>
-                    <span>Discounted: ₹{basePrice}</span>
-                    <span>Actual: ₹{actualPrice}</span>
-                  </div>
-                </div>
-              );
-            })}
+        {rideStatus === "Pending" && (
+          <div className="status-card">
+            <div className="status-header">
+                <strong>Ride Status</strong>
+                <span className="status-indicator pending">Waiting for Driver</span>
+            </div>
+            <p style={{ fontSize: '0.85rem', color: '#64748b' }}>A driver will accept your request shortly. You can still cancel this ride.</p>
+            <button className="secondary-action-btn" style={{ borderColor: '#fecaca', color: '#ef4444' }} onClick={handleCancelRide}>
+                <FaTimes /> Cancel Ride
+            </button>
           </div>
         )}
-      </div>
 
-      {/* ACTION BUTTONS */}
-      <div className="button-group">
-        <button
-          onClick={handleAction}
-          disabled={!vehicleType || !pickupCoords || !dropCoords}
-        >
-         Book Ride
-        </button>
+        {otp && (
+          <div className="status-card animate-slide-up" style={{ backgroundColor: '#f0fdf4', borderColor: '#bbf7d0' }}>
+            <div className="status-header">
+                <strong>Ride Active</strong>
+                <span className="status-indicator accepted">Accepted</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
+                <div className="intel-box">
+                    <span className="executive-tag">Ride OTP</span>
+                    <p style={{ fontSize: '1.5rem', fontWeight: 900, color: '#166534' }}>{otp}</p>
+                </div>
+                <div className="intel-box">
+                    <span className="executive-tag">Driver</span>
+                    <p style={{ fontWeight: 800 }}>{driverPhone}</p>
+                </div>
+            </div>
+            <button className="secondary-action-btn" onClick={() => { setOtp(null); setDriverPhone(null); localStorage.removeItem("ride_otp"); localStorage.removeItem("ride_driver_phone"); }}>
+                Dismiss Details
+            </button>
+          </div>
+        )}
+      </aside>
 
-        <button className="clearbtn" onClick={() => {
-          setPickup("");
-          setDrop("");
-          setPickupCoords(null);
-          setDropCoords(null);
-          pickupRef.current.value = "";
-          dropRef.current.value = "";
-          setDistanceKm(null);
-          setVehicleType("");
-          setPrice(null);
-          setStep("check");
-        }}>
-          Clear Locations
+      <main className="map-viewport">
+        <button onClick={() => navigate("/")} className="floating-back-btn">
+          <FaArrowLeft /> Back to Lifestyle
         </button>
-      </div>
+        <div ref={mapContainerRef} className="map-container"></div>
+
+        {showLocationPopup && (
+          <div className="mobility-popup-overlay">
+            <div className="mobility-popup animate-pop-in">
+              <h3>Enable Location?</h3>
+              <p>Would you like to use your current location for a faster pickup experience?</p>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button className="primary-ride-btn" style={{ flex: 1 }} onClick={() => { handleUseMyLocation(); setShowLocationPopup(false); }}>
+                  Yes, Use Location
+                </button>
+                <button className="secondary-action-btn" style={{ flex: 1 }} onClick={() => { setShowLocationPopup(false); setLocationPopupDismissed(true); }}>
+                  Manual Search
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
-
-    {rideStatus === "Pending" && (
-      <div className="ride-status">
-        <p><strong>Note:</strong> You can cancel until driver accepts or rejects</p>
-        <button onClick={handleCancelRide}>Cancel Ride</button>
-      </div>
-    )}
-
-    {otp && driverPhone && (
-      <div className="ride-details">
-        <h3>Ride Details:</h3>
-        <p><strong>OTP:</strong> {otp}</p>
-        <p><strong>Driver Contact:</strong> {driverPhone}</p>
-        <button onClick={() => {
-          setOtp(null);
-          setDriverPhone(null);
-          localStorage.removeItem("ride_otp");
-          localStorage.removeItem("ride_driver_phone");
-        }}>
-          Delete Details
-        </button>
-      </div>
-    )}
-
-    <div ref={mapContainerRef} className="map-container"></div>
-  </div>
-);
-
-
+  );
 }
+

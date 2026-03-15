@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./auth.css";
 import { API_BASE_URL } from "../main";
+import { toast } from 'react-toastify';
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -21,11 +22,11 @@ export default function Login() {
     try {
       const res = await axios.post(`${API_BASE_URL}/api/delivery-users/login`, formData);
       localStorage.setItem("token", res.data.token);
-      alert("Login Successful");
+      toast.success("Login Successful");
       if (res.data.user.role === "admin") navigate("/admin");
       else navigate("/dashboard");
     } catch (err) {
-      alert(err.response?.data?.message || "Login failed");
+      toast.error(err.response?.data?.message || "Login failed");
     }
   };
 

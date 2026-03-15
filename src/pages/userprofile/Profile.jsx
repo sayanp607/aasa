@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../../main';
+import { FaShoppingBag, FaGift, FaBox, FaRupeeSign, FaCalendarAlt, FaBarcode, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
 import "./UserProfile.css";
 
 const UserProfile = () => {
@@ -32,37 +33,28 @@ const UserProfile = () => {
      
 
       <div className="user-orders-container">
-        <h2 className="order-heading">My  Orders</h2>
+        <div className="profile-header-section">
+          <h2 className="order-heading">Profile & Orders</h2>
+          <p className="order-subheading">Manage your purchases and track shipments</p>
+        </div>
 
         {/* ✅ Tab Switch */}
-        <div style={{ marginBottom: '20px' }}>
-         <button
-  onClick={() => setActiveTab('cloth')}
-  style={{
-    marginRight: 10,
-    padding: '8px 16px',
-    background: activeTab === 'cloth' ? '#007bff' : '#f0f0f0',
-    color: activeTab === 'cloth' ? '#fff' : '#333',
-    border: '1px solid #ccc',
-    borderRadius: '4px'
-  }}
->
-  Cloth Orders
-</button>
+        <div className="tabs-wrapper">
+          <button
+            onClick={() => setActiveTab('cloth')}
+            className={`tab-btn ${activeTab === 'cloth' ? 'active cloth' : ''}`}
+          >
+            <FaShoppingBag className="tab-icon" />
+            Cloth Orders
+          </button>
 
-<button
-  onClick={() => setActiveTab('gift')}
-  style={{
-    padding: '8px 16px',
-    background: activeTab === 'gift' ? '#28a745' : '#f0f0f0',
-    color: activeTab === 'gift' ? '#fff' : '#333',
-    border: '1px solid #ccc',
-    borderRadius: '4px'
-  }}
->
-  Gift Orders
-</button>
-
+          <button
+            onClick={() => setActiveTab('gift')}
+            className={`tab-btn ${activeTab === 'gift' ? 'active gift' : ''}`}
+          >
+            <FaGift className="tab-icon" />
+            Gift Orders
+          </button>
         </div>
 
         {/* ✅ Order Display */}
@@ -72,49 +64,84 @@ const UserProfile = () => {
           ) : (
             (activeTab === 'cloth' ? clothOrders : giftOrders).map(order => (
               <div key={order._id} className="order-card">
-                {(order.cloth?.image || order.gift?.image) && (
+                {order.cloth && order.cloth.image && (
                   <img
-                    src={`${API_BASE_URL}${order.cloth?.image || order.gift?.image}`}
+                    src={`${API_BASE_URL}/uploads/${order.cloth.image}`}
+                    alt="Order"
+                    className="order-img"
+                  />
+                )}
+                {order.gift && order.gift.image && (
+                  <img
+                    src={`${API_BASE_URL}${order.gift.image}`}
                     alt="Order"
                     className="order-img"
                   />
                 )}
 
                 <div className="order-header">
-                  <h3>{order.cloth?.name || order.gift?.name}</h3>
-                  <span style={{ fontSize: "0.8rem", color: "#999", marginLeft: "10px" }}>
-                    {order.cloth ? '(Cloth)' : '(Gift)'}
-                  </span>
+                  <div className="title-group">
+                    <h3>{order.cloth?.name || order.gift?.name}</h3>
+                    <span className="category-label">
+                      {order.cloth ? 'Cloth' : 'Gift'}
+                    </span>
+                  </div>
                   <span className="status-badge" style={{ backgroundColor: getStatusColor(order.status) }}>
                     {order.status}
                   </span>
                 </div>
 
-                <div className="order-info">
-                  {order.cloth && <p><strong>Size:</strong> {order.size}</p>}
-                  {order.gift && <p><strong>Category:</strong> {order.gift.category}</p>}
-                  <p><strong>Amount:</strong> ₹{order.amount}</p>
-                  <p><strong>Quantity:</strong> {order.quantity}</p>
-                  <p><strong>Payment ID:</strong> {order.paymentId}</p>
+                <div className="order-info-stats">
+                  <div className="stat-item">
+                    <FaBox className="stat-icon" />
+                    <div className="stat-text">
+                      <label>{order.cloth ? 'Size' : 'Category'}</label>
+                      <span>{order.cloth ? order.size : order.gift.category}</span>
+                    </div>
+                  </div>
+                  <div className="stat-item">
+                    <FaRupeeSign className="stat-icon" />
+                    <div className="stat-text">
+                      <label>Amount</label>
+                      <span>₹{order.amount}</span>
+                    </div>
+                  </div>
+                  <div className="stat-item">
+                    <FaBarcode className="stat-icon" />
+                    <div className="stat-text">
+                      <label>Quantity</label>
+                      <span>{order.quantity}</span>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="shipping-info">
+                <div className="payment-reference">
+                   <strong>Ref:</strong> {order.paymentId}
+                </div>
+
+                <div className="shipping-info-box">
+                  <div className="shipping-header">
+                    <FaMapMarkerAlt className="shipping-icon" />
+                    <strong>Shipping Address</strong>
+                  </div>
                   {order.shippingId ? (
-                    <>
-                      <div><strong>{order.shippingId.fullName}</strong></div>
-                      <div>{order.shippingId.phone}</div>
-                      <div>{order.shippingId.addressLine1}</div>
-                      <div>{order.shippingId.addressLine2}</div>
-                      <div>{order.shippingId.city}, {order.shippingId.state} - {order.shippingId.pincode}</div>
-                      <div>{order.shippingId.country}</div>
-                    </>
+                    <div className="address-details">
+                      <div className="name-phone">
+                        <span className="ship-name">{order.shippingId.fullName}</span>
+                        <span className="ship-phone"><FaPhone size={10} /> {order.shippingId.phone}</span>
+                      </div>
+                      <div className="address-line">
+                        {order.shippingId.addressLine1}, {order.shippingId.addressLine2 && order.shippingId.addressLine2 + ","} {order.shippingId.city}, {order.shippingId.state} - {order.shippingId.pincode}
+                      </div>
+                    </div>
                   ) : (
-                    "No Address"
+                    <div className="no-address-msg">No shipping address recorded</div>
                   )}
                 </div>
 
                 <div className="order-footer">
-                  <p><strong>Order Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+                  <FaCalendarAlt className="date-icon" />
+                  <span>Ordered on {new Date(order.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>
             ))

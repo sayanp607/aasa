@@ -9,7 +9,7 @@ export default function Adventure() {
     const role = localStorage.getItem("role");
 
     if (role === "user" || role==="admin") {
-      navigate("/adventurehome");
+      navigate("/adventurehome", { replace: true });
     } 
   }, [navigate]);
 

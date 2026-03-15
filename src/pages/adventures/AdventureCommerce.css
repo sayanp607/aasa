@@ -1,0 +1,181 @@
+/* AdventureCommerce.css */
+.commerce-container {
+  padding: 4rem 5%;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: 'Outfit', sans-serif;
+}
+
+.commerce-header {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.commerce-header h2 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+/* Cart Styles */
+.cart-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cart-card {
+  background: white;
+  border-radius: 24px;
+  padding: 2rem;
+  border: 1px solid #e2e8f0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.cart-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.cart-info h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.cart-meta {
+  display: flex;
+  gap: 1.5rem;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.cart-extras {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.extra-pill {
+  padding: 4px 12px;
+  background: #f0fdf4;
+  color: #10b981;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid #10b981;
+}
+
+.cart-price-side {
+  text-align: right;
+}
+
+.cart-total-value {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #0f172a;
+  display: block;
+}
+
+.checkout-btn-cart {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+}
+
+.checkout-btn-cart:hover {
+  background: #059669;
+}
+
+/* Checkout / Billing Form */
+.checkout-layout {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 4rem;
+}
+
+.billing-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.billing-form input {
+  padding: 16px;
+  border-radius: 15px;
+  border: 1px solid #e2e8f0;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  outline: none;
+}
+
+.billing-form input:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.order-summary-box {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 32px;
+  border: 1px solid #e2e8f0;
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.summary-row.total {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px dashed #e2e8f0;
+  color: #0f172a;
+  font-weight: 900;
+  font-size: 1.5rem;
+}
+
+.place-order-btn {
+  width: 100%;
+  background: #0f172a;
+  color: white;
+  border: none;
+  padding: 18px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 2rem;
+  transition: all 0.3s ease;
+}
+
+.place-order-btn:hover {
+  background: black;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .checkout-layout {
+    grid-template-columns: 1fr;
+  }
+}

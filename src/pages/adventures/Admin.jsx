@@ -2,30 +2,51 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../../main';
 import { useNavigate } from 'react-router-dom';
-
+import './AdminAdventure.css';
+import { toast } from 'react-toastify';
+import { 
+  FaPlus, 
+  FaMountain, 
+  FaChartLine, 
+  FaUsersCog, 
+  FaTrash, 
+  FaCheck, 
+  FaFire, 
+  FaCampground, 
+  FaUtensils 
+} from 'react-icons/fa';
 
 function Admin() {
   const [form, setForm] = useState({
-    title: '', location: '', region: '', difficulty: 'Easy',
-    price: '', discountPrice: '', image: '', description: '', availableDates: []
+    title: '', location: '', region: '', category: 'Trek', difficulty: 'Medium',
+    price: '', discountPrice: '', image: '', description: '', 
+    firecamp: false, tentStay: false, foodAndNightlife: false,
+    availableDates: []
   });
-  const [trips, setTrips] = useState([]); // 👈 for displaying existing trips
+  const [trips, setTrips] = useState([]);
   const [dateInput, setDateInput] = useState('');
   const navigate = useNavigate();
 
-
-  // Fetch existing trips
   useEffect(() => {
     fetchTrips();
   }, []);
 
   const fetchTrips = async () => {
-    const res = await axios.get(`${API_BASE_URL}/api/admintrip/trips`);
-    setTrips(res.data);
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/admintrip/trips`);
+      setTrips(res.data);
+    } catch (err) {
+      console.error("Failed to fetch logistics data");
+    }
   };
 
   const handleChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
+  };
+
+  const toggleFormExtra = (key) => {
+    setForm(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   const handleDateAdd = () => {
@@ -35,92 +56,153 @@ function Admin() {
     }
   };
 
-  const handleDateRemove = (date) => {
-    setForm(prev => ({
-      ...prev,
-      availableDates: prev.availableDates.filter(d => d !== date)
-    }));
+  const removeItem = (date) => {
+    setForm(prev => ({ ...prev, availableDates: prev.availableDates.filter(d => d !== date) }));
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
     try {
       await axios.post(`${API_BASE_URL}/api/admintrip/trips`, form);
-      alert('Trip created successfully!');
+      toast.success('Mission Log updated successfully!');
       setForm({
-        title: '', location: '', region: '', difficulty: 'Easy',
-        price: '', discountPrice: '', image: '', description: '', availableDates: []
+        title: '', location: '', region: '', category: 'Trek', difficulty: 'Medium',
+        price: '', discountPrice: '', image: '', description: '', 
+        firecamp: false, tentStay: false, foodAndNightlife: false,
+        availableDates: []
       });
-      fetchTrips(); // Refresh list
+      fetchTrips();
     } catch (err) {
       console.error(err);
-      alert('Error creating trip');
+      toast.error('Error updating mission logs');
     }
   };
 
   const handleDelete = async (id) => {
-    const confirm = window.confirm('Are you sure you want to delete this trip?');
-    if (!confirm) return;
-
+    if (!window.confirm('Decommission this expedition?')) return;
     try {
       await axios.delete(`${API_BASE_URL}/api/admintrip/trips/${id}`);
-      alert('Trip deleted!');
-      fetchTrips(); // Refresh list
+      fetchTrips();
+      toast.info('Expedition decommissioned');
     } catch (err) {
-      console.error(err);
-      alert('Failed to delete trip');
+      toast.error('Failed to decommission trip');
     }
   };
 
   return (
-    <div>
-      <h2>Add New Trip</h2>
-      <button onClick={() => navigate('/admin/orders')}>
-  View All Orders
-</button>
-
-      <form onSubmit={handleSubmit}>
-        <input name="title" placeholder="Title" value={form.title} onChange={handleChange} />
-        <input name="location" placeholder="Location" value={form.location} onChange={handleChange} />
-        <input name="region" placeholder="Region" value={form.region} onChange={handleChange} />
-        <select name="difficulty" value={form.difficulty} onChange={handleChange}>
-          <option>Easy</option>
-          <option>Medium</option>
-          <option>Difficult</option>
-        </select>
-        <input name="price" type="number" placeholder="Price" value={form.price} onChange={handleChange} />
-        <input name="discountPrice" type="number" placeholder="Discount Price" value={form.discountPrice} onChange={handleChange} />
-        <input name="image" placeholder="Image URL" value={form.image} onChange={handleChange} />
-        <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} />
-
+    <div className="admin-adventure-container animate-fade-in">
+      <header className="admin-header">
         <div>
-          <h4>Available Dates</h4>
-          <input type="date" value={dateInput} onChange={e => setDateInput(e.target.value)} />
-          <button type="button" onClick={handleDateAdd}>Add Date</button>
-          <ul>
-            {form.availableDates.map((date, idx) => (
-              <li key={idx}>
-                {date} <button type="button" onClick={() => handleDateRemove(date)}>Remove</button>
-              </li>
-            ))}
-          </ul>
+          <span style={{ color: '#10b981', fontWeight: 800, fontSize: '0.8rem', textTransform: 'uppercase' }}>Command Center</span>
+          <h2>Adventure Logistics</h2>
+        </div>
+        <button className="adm-btn-submit" onClick={() => navigate('/admin/orders')} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <FaUsersCog /> Review All Missions
+        </button>
+      </header>
+
+      <section className="admin-stats-grid">
+        <div className="stat-card">
+          <span className="label">Active Portfolios</span>
+          <div className="value">{trips.length}</div>
+        </div>
+        <div className="stat-card">
+          <span className="label">Unique Regions</span>
+          <div className="value">{new Set(trips.map(t => t.region)).size || 1}</div>
+        </div>
+        <div className="stat-card">
+            <span className="label">Expedition Volume</span>
+            <div className="value"><FaChartLine color="#10b981" /> High</div>
+        </div>
+        <div className="stat-card">
+            <span className="label">Status</span>
+            <div className="value" style={{ color: '#10b981' }}>ONLINE</div>
+        </div>
+      </section>
+
+      <div className="admin-main-grid">
+        <div className="admin-section-card">
+          <h3 style={{ marginBottom: '2rem', fontWeight: 800 }}>Forge New Expedition</h3>
+          <form className="admin-form" onSubmit={handleSubmit}>
+            <input name="title" placeholder="Expedition Title" value={form.title} onChange={handleChange} required />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <input name="location" placeholder="Primary Location" value={form.location} onChange={handleChange} required />
+                <input name="region" placeholder="Operational Region" value={form.region} onChange={handleChange} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <select name="category" value={form.category} onChange={handleChange}>
+                  <option>Trek</option>
+                  <option>Water Sports</option>
+                  <option>Rappelling</option>
+                  <option>Culture</option>
+                </select>
+                <select name="difficulty" value={form.difficulty} onChange={handleChange}>
+                  <option>Easy</option>
+                  <option>Medium</option>
+                  <option>Difficult</option>
+                  <option>Extreme</option>
+                </select>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <input name="price" type="number" placeholder="Standard Cost" value={form.price} onChange={handleChange} required />
+                <input name="discountPrice" type="number" placeholder="Intelligence Offer" value={form.discountPrice} onChange={handleChange} />
+            </div>
+            <input name="image" placeholder="Cinematic Image URL (8K)" value={form.image} onChange={handleChange} required />
+            <textarea name="description" placeholder="Expedition Mission Brief (Description)" value={form.description} onChange={handleChange} rows="4" />
+            
+            <div>
+                <h4 style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '1rem' }}>EXPEDITION EXTRAS</h4>
+                <div className="extras-toggle-grid">
+                    <div className={`extra-toggle ${form.firecamp ? 'active' : ''}`} onClick={() => toggleFormExtra('firecamp')}>
+                        <FaFire /> Firecamp
+                    </div>
+                    <div className={`extra-toggle ${form.tentStay ? 'active' : ''}`} onClick={() => toggleFormExtra('tentStay')}>
+                        <FaCampground /> Tent Stay
+                    </div>
+                    <div className={`extra-toggle ${form.foodAndNightlife ? 'active' : ''}`} onClick={() => toggleFormExtra('foodAndNightlife')}>
+                        <FaUtensils /> Full Food
+                    </div>
+                </div>
+            </div>
+
+            <div style={{ background: 'rgba(15, 23, 42, 0.5)', padding: '1.5rem', borderRadius: '20px' }}>
+              <h4 style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>DEPLOYMENT DATES</h4>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <input type="date" value={dateInput} onChange={e => setDateInput(e.target.value)} style={{ flex: 1 }} />
+                <button type="button" onClick={handleDateAdd} className="adm-btn-submit" style={{ padding: '0 20px' }}><FaPlus /></button>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '1rem' }}>
+                {form.availableDates.map((date, idx) => (
+                  <span key={idx} className="extra-pill" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    {date} <FaTrash onClick={() => removeItem(date)} style={{ cursor: 'pointer' }} />
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <button type="submit" className="adm-btn-submit" style={{ fontSize: '1.1rem' }}>Deploy Portfolio Item</button>
+          </form>
         </div>
 
-        <button type="submit">Add Trip</button>
-      </form>
-
-      <hr />
-      <h2>All Trips</h2>
-      {trips.length === 0 ? <p>No trips found.</p> : (
-        <ul>
-          {trips.map(trip => (
-            <li key={trip._id} style={{ marginBottom: '10px' }}>
-              <strong>{trip.title}</strong> — ₹{trip.price} ({trip.difficulty})<br />
-              <button onClick={() => handleDelete(trip._id)}>Delete</button>
-            </li>
-          ))}
-        </ul>
-      )}
+        <div className="admin-section-card">
+          <h3 style={{ marginBottom: '2rem', fontWeight: 800 }}>Expedition Portfolio</h3>
+          <div className="admin-trips-list">
+            {trips.length === 0 ? <p style={{ color: '#94a3b8' }}>Portfolio is empty. Access Denied.</p> : (
+              trips.map(trip => (
+                <div key={trip._id} className="admin-trip-item">
+                  <div>
+                    <strong style={{ fontSize: '1.1rem', color: '#10b981' }}>{trip.title}</strong>
+                    <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>
+                      <FaMountain /> {trip.difficulty} | ₹{trip.price} | {trip.location}
+                    </div>
+                  </div>
+                  <button className="adm-btn-danger" onClick={() => handleDelete(trip._id)}>DECOMMISSION</button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

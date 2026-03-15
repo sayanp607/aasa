@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./auth.css";
 import { API_BASE_URL } from '../main';
+import { toast } from 'react-toastify';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -25,11 +26,11 @@ export default function Register() {
     try {
       const res = await axios.post(`${API_BASE_URL}/api/delivery-users/register`, formData);
       localStorage.setItem("token", res.data.token);
-      alert("Registration Successful");
+      toast.success("Registration Successful");
       if (res.data.user.role === "admin") navigate("/admin");
       else navigate("/dashboard");
     } catch (err) {
-      alert(err.response?.data?.message || "Registration failed");
+      toast.error(err.response?.data?.message || "Registration failed");
     }
   };
 

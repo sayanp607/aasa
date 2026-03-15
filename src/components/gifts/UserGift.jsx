@@ -5,6 +5,8 @@ import SearchBar from './SearchBar';
 import GiftCard from './GiftCard';
 import ShippingForm from '../ShippingForm';
 import './UserGift.css';
+import { FaGift, FaTimes, FaShoppingBag, FaArrowRight, FaPlus, FaMinus } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const categories = ['Corporate Gifts', 'Personalised Gifts', 'Birthday Gifts', 'Anniversary Gifts'];
 
@@ -14,8 +16,8 @@ const UserGift = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
 
-  const [buyingGift, setBuyingGift] = useState(null); // 👈 for modal
-  const [shippingInfo, setShippingInfo] = useState(null);
+  const [buyingGift, setBuyingGift] = useState(null);
+  const [shippingId, setShippingId] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
   const fetchGifts = async () => {
@@ -48,214 +50,175 @@ const UserGift = () => {
 
   const handleAddToGiftCart = async (giftId) => {
     try {
-      const userId = JSON.parse(localStorage.getItem('user')).id;
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user) {
+        toast.warning("Please login first");
+        return;
+      }
+      
       const res = await axios.post(`${API_BASE_URL}/api/cart/add-gift`, {
-        userId,
+        userId: user.id,
         giftId
       }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
 
       if (res.data.alreadyExists) {
-        alert("Gift is already added in the cart");
+        toast.info("Gift already in boutique bag!");
       } else {
-        alert("Gift added to cart");
+        toast.success("Gift added to boutique bag!");
       }
     } catch (err) {
-      console.error(err);
-      alert("Error adding gift to cart");
+      toast.error("Error adding gift to bag");
     }
   };
-const handlePayment = async () => {
-  const total = buyingGift.price * quantity;
 
-  try {
-    const { data: order } = await axios.post(`${API_BASE_URL}/api/order/create-payment-order`, {
-      amount: total
-    }, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-    });
+  const handlePayment = async () => {
+    const total = buyingGift.price * quantity;
+    try {
+      const { data: order } = await axios.post(`${API_BASE_URL}/api/order/create-payment-order`, {
+        amount: total
+      }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
 
-    const options = {
-      key: "rzp_test_5Dp4Elo76csOCm",
-      amount: order.amount,
-      currency: order.currency,
-      name: "Gift Store",
-      description: "Purchase Gift",
-      order_id: order.id,
-
-      handler: async (response) => {
-        alert("Payment successful!");
-
-        await axios.post(`${API_BASE_URL}/api/order/place-gift-order`, {
-          giftId: buyingGift._id,
-          amount: total,
-          quantity,
-          paymentId: response.razorpay_payment_id,
-          shippingId: shippingInfo._id
-        }, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        });
-
-        // Fetch updated gift list (reflect reduced stock)
-        const updatedRes = await axios.get(`${API_BASE_URL}/api/gifts/category/${selectedCategory}`);
-        setGifts(updatedRes.data);
-
-        // Reset states
-        setBuyingGift(null);
-        setShippingInfo(null);
-        setQuantity(1);
-      },
-
-      prefill: {
-        name: shippingInfo.fullName,
-        contact: shippingInfo.phone
-      }
-    };
-
-    // Hide modal before payment popup opens
-    setBuyingGift(null);
-    setShippingInfo(null);
-    setQuantity(1);
-
-    const rzp = new window.Razorpay(options);
-    rzp.open();
-
-  } catch (err) {
-    alert("Payment failed");
-    console.error(err);
-  }
-};
-
-
+      const options = {
+        key: "rzp_test_5Dp4Elo76csOCm",
+        amount: order.amount,
+        currency: order.currency,
+        name: "Aasa Boutique",
+        description: `Purchase: ${buyingGift.name}`,
+        order_id: order.id,
+        handler: async (response) => {
+          try {
+            await axios.post(`${API_BASE_URL}/api/order/place-gift-order`, {
+              giftId: buyingGift._id,
+              amount: total,
+              quantity,
+              paymentId: response.razorpay_payment_id,
+              shippingId: shippingId._id || shippingId
+            }, {
+              headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            });
+            toast.success("Order placed successfully! This handcrafted treasure is on its way.");
+            setBuyingGift(null);
+            setShippingId(null);
+            setQuantity(1);
+            fetchGifts();
+          } catch (err) {
+            toast.error("Payment successful but failed to record order. Please contact support.");
+          }
+        }
+      };
+      new window.Razorpay(options).open();
+    } catch (err) {
+      toast.error("Failed to initiate payment");
+    }
+  };
 
   useEffect(() => {
     fetchGifts();
     setSearchTerm('');
   }, [selectedCategory]);
 
- return (
-  <div className="user-gift-container">
-    <h2 className="heading">
-      TURN YOUR IMAGINATION INTO REALITY,<br />YOUR STORY, BEAUTIFULLY CRAFTED
-    </h2>
+  return (
+    <div className="user-gift-container">
+      <header className="gift-hero-banner">
+        <div className="banner-overlay"></div>
+        <div className="banner-content">
+          <span className="premium-tag">Artesian Collection</span>
+          <h2>Crafting Your Story</h2>
+          <p>Turn your imagination into reality with our beautifully crafted treasures.</p>
+        </div>
+      </header>
 
-    <div className="categories">
-      {categories.map((cat) => (
-        <button
-          key={cat}
-          onClick={() => setSelectedCategory(cat)}
-          className={cat === selectedCategory ? 'active' : ''}
-        >
-          {cat.toUpperCase()}
-        </button>
-      ))}
-    </div>
+      <div className="gift-controls">
+        <div className="categories-pills">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`category-pill ${cat === selectedCategory ? 'active' : ''}`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
 
-    <div className="search-bar-container">
-      <SearchBar
-        value={searchTerm}
-        onChange={(val) => {
-          setSearchTerm(val);
-          fetchSuggestions(val);
-        }}
-        onSelectSuggestion={handleSelectSuggestion}
-        suggestions={suggestions}
-      />
-    </div>
+        <SearchBar
+          value={searchTerm}
+          onChange={(val) => {
+            setSearchTerm(val);
+            fetchSuggestions(val);
+          }}
+          onSelectSuggestion={handleSelectSuggestion}
+          suggestions={suggestions}
+        />
+      </div>
 
-    <div className="gift-grid">
-      {gifts.map((g) => (
-        <div className="gift-card" key={g._id}>
+      <div className="gift-grid">
+        {gifts.map((g, idx) => (
           <GiftCard
+            key={g._id}
             gift={g}
-            onBuy={() => setBuyingGift(g)}
+            onBuy={setBuyingGift}
             onAddToCart={handleAddToGiftCart}
           />
-        </div>
-      ))}
-    </div>
-
-    {/* 💳 Buy Modal */}
-    {buyingGift && (
-      <div className="modal">
-        <div className="modal-content">
-          <h3>Buy: {buyingGift.name}</h3>
-          <p>Price: ₹{buyingGift.price}</p>
-          <p>Stock Available: {buyingGift.stock}</p>
-
-          {!shippingInfo ? (
-            <ShippingForm onShippingSaved={setShippingInfo} />
-          ) : (
-            <>
-              {buyingGift.stock === 0 ? (
-                <p style={{ color: 'red', fontWeight: 'bold' }}>
-                  ❌ This product is currently out of stock.
-                </p>
-              ) : (
-                <>
-                  <div className="quantity-wrapper">
-  <label>Quantity:</label>
-  <div className="quantity-controls">
-    <button
-      className="qty-btn"
-      onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-    >
-      −
-    </button>
-    <span className="qty-value">{quantity}</span>
-    <button
-      className="qty-btn"
-      onClick={() =>
-        setQuantity((prev) =>
-          Math.min(buyingGift.stock, prev + 1)
-        )
-      }
-    >
-      +
-    </button>
-  </div>
-</div>
-
-                  <p>Total: ₹{buyingGift.price * quantity}</p>
-                  <button
-                    onClick={handlePayment}
-                    disabled={quantity < 1 || quantity > buyingGift.stock}
-                    className="pay-btn"
-                    style={{
-                      background:
-                        quantity < 1 || quantity > buyingGift.stock
-                          ? '#ccc'
-                          : '#28a745',
-                      cursor:
-                        quantity < 1 || quantity > buyingGift.stock
-                          ? 'not-allowed'
-                          : 'pointer',
-                    }}
-                  >
-                    Pay Now
-                  </button>
-                </>
-              )}
-            </>
-          )}
-
-          <button
-            className="cancel-btn"
-            onClick={() => {
-              setBuyingGift(null);
-              setShippingInfo(null);
-              setQuantity(1);
-            }}
-          >
-            Cancel
-          </button>
-        </div>
+        ))}
       </div>
-    )}
-  </div>
-);
 
+      {buyingGift && (
+        <div className="gift-modal-overlay animate-fade-in">
+          <div className="gift-modal-content animate-pop-in">
+            <button className="close-modal" onClick={() => { setBuyingGift(null); setShippingId(null); }}>
+              <FaTimes />
+            </button>
+            
+            {!shippingId ? (
+              <div className="modal-step">
+                <div className="step-header">
+                  <span className="step-num">01</span>
+                  <h3>Gift Delivery Location</h3>
+                </div>
+                <ShippingForm onShippingSaved={setShippingId} inline={true} />
+              </div>
+            ) : (
+              <div className="modal-step">
+                <div className="step-header">
+                  <span className="step-num">02</span>
+                  <h3>Complete Your Gift Order</h3>
+                </div>
+                
+                <div className="gift-summary-mini">
+                  <img src={`${API_BASE_URL}${buyingGift.image}`} alt="" className="mini-img" />
+                  <div className="mini-info">
+                    <h3>{buyingGift.name}</h3>
+                    <p>₹{buyingGift.price}</p>
+                  </div>
+                </div>
+
+                {buyingGift.stock === 0 ? (
+                  <div className="out-stock-alert">This handcrafted item is currently unavailable.</div>
+                ) : (
+                  <div className="checkout-footer">
+                    <div className="quantity-dial">
+                      <button onClick={() => setQuantity(q => Math.max(1, q - 1))}><FaMinus /></button>
+                      <span>{quantity}</span>
+                      <button onClick={() => setQuantity(q => Math.min(buyingGift.stock, q + 1))}><FaPlus /></button>
+                    </div>
+                    
+                    <button className="final-pay-btn" onClick={handlePayment}>
+                      Confirm & Pay ₹{buyingGift.price * quantity} <FaArrowRight />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default UserGift;

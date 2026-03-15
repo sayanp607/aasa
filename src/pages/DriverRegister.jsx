@@ -3,6 +3,7 @@ import axios from 'axios';
 import { API_BASE_URL } from '../main';
 import { useNavigate } from 'react-router-dom';
 import './Form.css';
+import { toast } from 'react-toastify';
 
 export default function DriverRegister() {
   const [form, setForm] = useState({
@@ -21,10 +22,10 @@ export default function DriverRegister() {
   const handleSubmit = async () => {
     try {
       await axios.post(`${API_BASE_URL}/api/drivers/register`, form);
-      alert('Driver Registered Successfully');
+      toast.success('Driver Registered Successfully');
       navigate('/driver/dashboard');
     } catch (err) {
-      alert('Error registering driver');
+      toast.error('Error registering driver');
     }
   };
 

@@ -1,118 +1,300 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
 .user-orders-container {
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 1000px;
+  margin: 120px auto 60px;
+  padding: 3.5rem;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 40px;
+  box-shadow: var(--glass-shadow);
+  position: relative;
+  overflow: hidden;
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.profile-header-section {
+  text-align: center;
+  margin-bottom: 3.5rem;
 }
 
 .order-heading {
-  text-align: center;
-  color: #333;
-  margin-bottom: 20px;
-  font-size: 28px;
+  font-size: 3rem;
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -1.5px;
 }
 
+.order-subheading {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* Tabs Styling */
+.tabs-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  padding: 8px;
+  background: rgba(241, 245, 249, 0.5);
+  border-radius: 24px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 18px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  color: var(--text-muted);
+  background: transparent;
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--text-main);
+}
+
+.tab-btn.active.cloth {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 8px 20px var(--primary-glow);
+}
+
+.tab-btn.active.gift {
+  background: #10b981;
+  color: white;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+}
+
+.tab-icon {
+  font-size: 1.1rem;
+}
+
+/* Orders Grid */
 .orders-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 2.5rem;
 }
 
 .order-card {
-  background: #f9f9f9;
-  padding: 15px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  padding: 2.25rem;
+  border-radius: 32px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  transition: transform 0.2s, box-shadow 0.2s;
+  gap: 1.5rem;
+  transition: var(--transition-bounce);
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.02);
 }
 
 .order-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transform: translateY(-8px);
+  border-color: var(--primary);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.06);
 }
 
 .order-img {
   width: 100%;
-  height: 180px;
+  height: 220px;
   object-fit: cover;
-  border-radius: 4px;
-  margin-bottom: 10px;
+  border-radius: 24px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
 }
 
 .order-header {
   display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
-.order-header h3 {
+.title-group h3 {
   margin: 0;
-  font-size: 20px;
-  color: #333;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1e293b;
+  letter-spacing: -0.5px;
+}
+
+.category-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .status-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: 6px 16px;
+  border-radius: 100px;
   color: #fff;
-  font-size: 12px;
-  margin-left: auto;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-.order-info {
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 10px;
+/* Stats */
+.order-info-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  padding: 1.25rem;
+  background: #f8fafc;
+  border-radius: 20px;
 }
 
-.shipping-info {
-  background: #eef6f8;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 10px;
-  font-size: 14px;
-  color: #333;
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.stat-icon {
+  color: var(--primary);
+  opacity: 0.7;
+  font-size: 1rem;
+}
+
+.stat-text label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.stat-text span {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.payment-reference {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-family: monospace;
+}
+
+/* Shipping Box */
+.shipping-info-box {
+  background: white;
+  border: 1px solid #f1f5f9;
+  padding: 1.5rem;
+  border-radius: 20px;
+}
+
+.shipping-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.shipping-icon {
+  color: #10b981;
+}
+
+.address-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.name-phone {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ship-name {
+  font-weight: 800;
+  font-size: 1rem;
+  color: #334155;
+}
+
+.ship-phone {
+  background: #f0fdf4;
+  color: #10b981;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.address-line {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .order-footer {
-  font-size: 13px;
-  color: #777;
-  text-align: right;
-  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 600;
 }
 
-.no-orders {
-  text-align: center;
-  color: #888;
-  font-size: 16px;
-  grid-column: 1/-1;
+/* Responsive Overrides */
+@media (max-width: 1024px) {
+  .orders-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-/* Responsive for small screens */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+  .user-orders-container {
+    padding: 2rem 1.5rem;
+    margin-top: 100px;
+  }
   .order-heading {
-    font-size: 22px;
+    font-size: 2.25rem;
   }
-
-  .order-card {
-    padding: 10px;
+  .order-subheading {
+    font-size: 1rem;
   }
-
-  .order-img {
-    height: 140px;
+  .tabs-wrapper {
+    width: 100%;
+    flex-direction: column;
+    gap: 0.5rem;
   }
-
-  .order-header h3 {
-    font-size: 18px;
-  }
-
-  .order-info, .shipping-info {
-    font-size: 13px;
+  .tab-btn {
+    width: 100%;
+    justify-content: center;
   }
 }

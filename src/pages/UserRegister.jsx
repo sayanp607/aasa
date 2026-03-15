@@ -3,6 +3,7 @@ import axios from 'axios';
 import { API_BASE_URL } from '../main';
 import { useNavigate,Link } from 'react-router-dom';
 import './Form.css';
+import { toast } from 'react-toastify';
 
 export default function UserRegister() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', password: '' });
@@ -12,12 +13,12 @@ export default function UserRegister() {
 
  const handleSubmit = async () => {
     try {
-        const res = await axios.post(`${API_BASE_URL}/api/users/register`, form, { withCredentials: true });
-        alert('Registered Successfully!');
+        await axios.post(`${API_BASE_URL}/api/users/register`, form, { withCredentials: true });
+        toast.success('Registered Successfully!');
         navigate('/user/profile');
     } catch (err) {
         console.log(err.response?.data);  // See exact backend error
-        alert(err.response?.data?.error || 'Error during registration');
+        toast.error(err.response?.data?.error || 'Error during registration');
     }
 };
 

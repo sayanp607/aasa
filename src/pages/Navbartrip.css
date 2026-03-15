@@ -7,30 +7,33 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #0d3b66;
-  color: white;
-  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--glass-border);
+  color: var(--text-main);
+  padding: 0 2rem;
+  height: 70px;
   flex-wrap: wrap;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Prevent content from going under fixed navbar */
-body {
-  padding-top: 60px; /* Adjust based on navbar height */
 }
 
 .logo {
-  font-size: 24px;
-  font-weight: bold;
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .nav-links a {
-  margin-left: 20px;
-  color: white;
+  margin-left: 1.5rem;
+  color: var(--text-muted);
   text-decoration: none;
   font-weight: 500;
+  transition: var(--transition-smooth);
 }
 
 .nav-links a:hover {
-  text-decoration: underline;
+  color: var(--primary);
 }

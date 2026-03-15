@@ -3,6 +3,7 @@ import axios from 'axios';
 import { API_BASE_URL } from '../main';
 import { useNavigate } from 'react-router-dom';
 import './Form.css';
+import { toast } from 'react-toastify';
 
 export default function DriverLogin() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -14,10 +15,10 @@ export default function DriverLogin() {
     try {
       const res = await axios.post(`${API_BASE_URL}/api/drivers/login`, form, { withCredentials: true });
       localStorage.setItem('token', res.data.token);
-      alert('Driver Login Successful');
+      toast.success('Driver Login Successful');
       navigate('/driver/dashboard');
     } catch (err) {
-      alert('Invalid credentials');
+      toast.error('Invalid credentials');
     }
   };
 
