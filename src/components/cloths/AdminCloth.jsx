@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../../main';
-import { FaMagic, FaPlusCircle, FaSearch, FaBoxes, FaExclamationTriangle, FaTrash, FaEdit, FaSave, FaImage, FaBoxOpen, FaChartLine, FaArrowLeft } from 'react-icons/fa';
+import { FaMagic, FaPlusCircle, FaSearch, FaBoxes, FaExclamationTriangle, FaTrash, FaEdit, FaSave, FaImage, FaBoxOpen, FaChartLine, FaArrowLeft, FaPlus } from 'react-icons/fa';
 import './AdminCloth.css';
 import { toast } from 'react-toastify';
 

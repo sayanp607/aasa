@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
-export const API_BASE_URL = 'https://aasa-backend.onrender.com'; 
+export const API_BASE_URL = 'http://localhost:8080'; 
 import { BrowserRouter } from 'react-router-dom';
 import './global.css';
 
