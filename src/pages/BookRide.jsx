@@ -21,6 +21,8 @@ export default function BookRide() {
   const [rideStatus, setRideStatus] = useState(() => localStorage.getItem("ride_status"));
   const [otp, setOtp] = useState(() => localStorage.getItem("ride_otp"));
   const [phone, setPhone] = useState("");
+  const [rating, setRating] = useState(0);
+  const [feedback, setFeedbackText] = useState("");
   const [hasAutoFilledLocation, setHasAutoFilledLocation] = useState(false);
   const [showLocationPopup, setShowLocationPopup] = useState(false);
 
@@ -64,13 +66,24 @@ export default function BookRide() {
         localStorage.setItem("ride_otp", data.otp);
         localStorage.setItem("ride_driver_phone", data.driverPhone);
         localStorage.setItem("ride_status", "Accepted");
-        toast.success(`Ride accepted! OTP: ${data.otp}`);
+        toast.success(`Trip Accepted! Driver Phone: ${data.driverPhone}`);
       });
 
       socket.current.on("ride_rejected", () => {
-        toast.error("Ride rejected by driver");
+        toast.info("Your ride request was not accepted. Please try again.");
         setRideStatus("Rejected");
         localStorage.setItem("ride_status", "Rejected");
+        setOtp(null);
+        setDriverPhone(null);
+      });
+
+      socket.current.on("ride_completed", () => {
+        console.log("Ride completed event received");
+        toast.success("Trip Finished! Please rate your experience.");
+        setRideStatus("Completed");
+        localStorage.setItem("ride_status", "Completed");
+        setOtp(null);
+        setDriverPhone(null);
       });
 
     } catch {
@@ -392,38 +405,140 @@ export default function BookRide() {
         </div>
 
         {rideStatus === "Pending" && (
-          <div className="status-card">
+          <div className="status-card animate-slide-up">
             <div className="status-header">
-                <strong>Ride Status</strong>
-                <span className="status-indicator pending">Waiting for Driver</span>
+                <strong>Searching...</strong>
+                <span className="status-indicator pending">Request Broadcasted</span>
             </div>
-            <p style={{ fontSize: '0.85rem', color: '#64748b' }}>A driver will accept your request shortly. You can still cancel this ride.</p>
-            <button className="secondary-action-btn" style={{ borderColor: '#fecaca', color: '#ef4444' }} onClick={handleCancelRide}>
-                <FaTimes /> Cancel Ride
+            <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '8px' }}>Waiting for a driver to accept. You can still cancel this request.</p>
+            <button className="secondary-action-btn" style={{ borderColor: '#fecaca', color: '#ef4444', marginTop: '12px' }} onClick={handleCancelRide}>
+                <FaTimes /> Cancel Request
             </button>
           </div>
         )}
 
-        {otp && (
-          <div className="status-card animate-slide-up" style={{ backgroundColor: '#f0fdf4', borderColor: '#bbf7d0' }}>
+        {rideStatus === "Accepted" && (
+          <div className="status-card animate-slide-up" style={{ background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)', borderColor: '#22c55e' }}>
             <div className="status-header">
-                <strong>Ride Active</strong>
-                <span className="status-indicator accepted">Accepted</span>
+                <strong style={{ color: '#166534' }}>Driver is Coming! ✅</strong>
+                <span className="status-indicator accepted" style={{ background: '#22c55e', color: 'white' }}>In Progress</span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
-                <div className="intel-box">
+                <div className="intel-box" style={{ background: 'white', border: '1px solid #bbf7d0' }}>
                     <span className="executive-tag">Ride OTP</span>
-                    <p style={{ fontSize: '1.5rem', fontWeight: 900, color: '#166534' }}>{otp}</p>
+                    <p style={{ fontSize: '1.4rem', fontWeight: 900, color: '#166534' }}>{otp}</p>
                 </div>
-                <div className="intel-box">
-                    <span className="executive-tag">Driver</span>
-                    <p style={{ fontWeight: 800 }}>{driverPhone}</p>
+                <div className="intel-box" style={{ background: 'white', border: '1px solid #bbf7d0' }}>
+                    <span className="executive-tag">Driver Phone</span>
+                    <p style={{ fontWeight: 800 }}>{driverPhone || 'Contacting...'}</p>
                 </div>
             </div>
-            <button className="secondary-action-btn" onClick={() => { setOtp(null); setDriverPhone(null); localStorage.removeItem("ride_otp"); localStorage.removeItem("ride_driver_phone"); }}>
-                Dismiss Details
-            </button>
+            <p style={{ fontSize: '0.75rem', color: '#15803d', marginTop: '10px', textAlign: 'center' }}>Cancellation is no longer available as the driver is en route.</p>
           </div>
+        )}
+
+        {rideStatus === "Rejected" && (
+           <div className="status-card animate-slide-up" style={{ backgroundColor: '#fff1f2', borderColor: '#fda4af' }}>
+             <div className="status-header">
+                <strong style={{ color: '#9f1239' }}>Ride Declined</strong>
+                <span className="status-indicator" style={{ background: '#e11d48', color: 'white' }}>Declined</span>
+             </div>
+             <p style={{ fontSize: '0.85rem', color: '#be123c', marginTop: '8px' }}>Unfortunately, no driver was available. Please try again or change location.</p>
+             <button className="primary-ride-btn" style={{ marginTop: '12px' }} onClick={() => { setRideStatus(null); localStorage.removeItem("ride_status"); }}>
+                Try Again
+             </button>
+           </div>
+        )}
+
+        {rideStatus === "Completed" && (
+           <div className="status-card animate-slide-up" style={{ 
+             background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)', 
+             borderColor: '#3b82f6',
+             position: 'relative' 
+           }}>
+             <button 
+                onClick={() => {
+                    setRideStatus(null);
+                    localStorage.removeItem("ride_status");
+                    localStorage.removeItem("ride_id");
+                    toast.info("Feedback skipped");
+                }}
+                style={{
+                    position: 'absolute',
+                    top: '12px',
+                    right: '12px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: '#3b82f6',
+                    fontSize: '1.2rem'
+                }}
+             >
+                <FaTimes />
+             </button>
+             <div className="status-header">
+                <strong style={{ color: '#1e40af' }}>Trip Finished! 🏁</strong>
+                <span className="status-indicator" style={{ background: '#3b82f6', color: 'white' }}>Finished</span>
+             </div>
+             <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: '#1e3a8a' }}>How was your experience with Aasa Mobility?</p>
+             
+             <div className="feedback-stars" style={{ display: 'flex', gap: '8px', margin: '1rem 0' }}>
+               {[1, 2, 3, 4, 5].map((star) => (
+                 <span 
+                   key={star} 
+                   onClick={() => setRating(star)}
+                   style={{ 
+                     fontSize: '2.4rem', 
+                     cursor: 'pointer', 
+                     color: (rating >= star) ? '#f59e0b' : '#cbd5e1',
+                     transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                     transform: (rating === star) ? 'scale(1.25)' : 'scale(1)'
+                   }}
+                 >
+                   ★
+                 </span>
+               ))}
+             </div>
+
+             <textarea 
+               placeholder="Tell us more (optional)..."
+               value={feedback}
+               onChange={(e) => setFeedbackText(e.target.value)}
+               className="feedback-textarea"
+               style={{ 
+                 width: '100%', 
+                 padding: '10px', 
+                 borderRadius: '8px', 
+                 border: '1px solid #bfdbfe', 
+                 fontSize: '0.85rem',
+                 marginBottom: '10px',
+                 minHeight: '60px'
+               }}
+             />
+
+             <button 
+               className="primary-ride-btn" 
+               style={{ width: '100%', background: '#1d4ed8' }}
+               onClick={async () => {
+                 try {
+                   const rideId = localStorage.getItem("ride_id");
+                   await axios.patch(`${API_BASE_URL}/api/rides/feedback/${rideId}`, { rating, feedback }, {
+                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+                   });
+                   toast.success("Feedback received. Thank you!");
+                   setRideStatus(null);
+                   localStorage.removeItem("ride_status");
+                   localStorage.removeItem("ride_id");
+                   setRating(0);
+                   setFeedbackText("");
+                 } catch (err) {
+                   toast.error("Failed to submit feedback");
+                 }
+               }}
+             >
+               Submit & Finish
+             </button>
+           </div>
         )}
       </aside>
 
