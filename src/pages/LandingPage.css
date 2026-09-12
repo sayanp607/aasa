@@ -201,29 +201,10 @@
 .cards-container {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(2, 240px);
+  grid-auto-rows: 240px;
   gap: 1.5rem;
   margin-top: 5rem;
   padding-bottom: 3rem;
-  counter-reset: card-index;
-}
-
-/* Featured card spans 2x2 area with entry animation */
-.card-item.featured-card {
-  grid-column: span 2;
-  grid-row: span 2;
-  aspect-ratio: auto;
-  animation: featured-focus 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
-}
-
-@keyframes featured-focus {
-  from { opacity: 0.8; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-/* Remove staggering for the strict bento layout */
-.cards-container > *:nth-child(even) {
-  margin-top: 0;
 }
 
 .card-item {
@@ -239,23 +220,6 @@
               border-color 0.4s ease;
   background: white;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
-}
-
-/* Creative Numbering - Scaled down */
-.card-item::before {
-  counter-increment: card-index;
-  content: "0" counter(card-index);
-  position: absolute;
-  top: 1.25rem;
-  right: 1.25rem;
-  z-index: 10;
-  font-family: 'Outfit', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: white;
-  opacity: 0.5;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.4);
 }
 
 .card-item:hover {
@@ -357,7 +321,8 @@
     margin: 0 auto 2.5rem;
   }
   .cards-container {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 220px;
     gap: 1.5rem;
   }
 }
@@ -375,15 +340,11 @@
     gap: 0.75rem;
   }
   .cards-container {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 220px;
     grid-template-rows: auto;
     gap: 1rem;
     margin-top: 3rem;
-  }
-  .card-item.featured-card {
-    grid-column: span 2;
-    grid-row: span 1;
-    height: 300px;
   }
   .card-item {
     height: 220px;
@@ -403,8 +364,5 @@
   }
   .cards-container {
     grid-template-columns: 1fr;
-  }
-  .card-item.featured-card {
-    grid-column: span 1;
   }
 }
