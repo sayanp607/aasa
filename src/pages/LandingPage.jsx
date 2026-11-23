@@ -176,10 +176,10 @@ const LandingPage = () => {
           </div>
 
           <div className="cards-section">
-            <h1 className="hero-title gradient-text">A Modern Experience 🚀</h1>
+            <h1 className="hero-title gradient-text">A Modern Experience</h1>
             <p className="hero-subtitle">
               Discover premium collections, seamless services, and unique
-              treasures all in one place. Powered by AWS Cloud &amp; CI/CD.
+              treasures all in one place.
             </p>
 
             {/* Delivery Box */}
