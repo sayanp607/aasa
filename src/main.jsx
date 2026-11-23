@@ -9,10 +9,13 @@ export const API_BASE_URL =
 import { BrowserRouter } from 'react-router-dom';
 import './global.css';
 
-createRoot(document.getElementById('root')).render(
+const rootElement = document.getElementById('root');
+if (rootElement) {
+  createRoot(rootElement).render(
     <BrowserRouter>
-  <StrictMode>
-    <App />
-  </StrictMode>
-  </BrowserRouter>,
-)
+      <StrictMode>
+        <App />
+      </StrictMode>
+    </BrowserRouter>
+  );
+}
