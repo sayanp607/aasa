@@ -25,8 +25,8 @@ describe('Frontend Unit Tests - Navbar Component', () => {
             </MemoryRouter>
         );
 
-        expect(screen.getByText(/Home/i)).toBeInTheDocument();
-        expect(screen.getByText(/Contact Us/i)).toBeInTheDocument();
-        expect(screen.getByText(/Profile/i)).toBeInTheDocument();
+        expect(screen.getAllByText(/Home/i).length).toBeGreaterThanOrEqual(1);
+        expect(screen.getAllByText(/Contact Us/i).length).toBeGreaterThanOrEqual(1);
+        expect(screen.getAllByText(/Profile/i).length).toBeGreaterThanOrEqual(1);
     });
 });

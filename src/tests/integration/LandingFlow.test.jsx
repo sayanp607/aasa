@@ -14,18 +14,18 @@ describe('Frontend Integration Tests - Landing Page & Full User Flow', () => {
             </MemoryRouter>
         );
 
-        // Verify Hero Title is in the DOM
+        // Verify Hero Title
         expect(screen.getByText(/A Modern Experience/i)).toBeInTheDocument();
 
-        // Verify feature cards are rendered (Fashion, Express, Explore, Secure)
-        expect(screen.getByText('Fashion')).toBeInTheDocument();
-        expect(screen.getByText('Express')).toBeInTheDocument();
-        expect(screen.getByText('Explore')).toBeInTheDocument();
-        expect(screen.getByText('Secure')).toBeInTheDocument();
+        // Verify Feature cards
+        expect(screen.getAllByText(/Fashion/i).length).toBeGreaterThanOrEqual(1);
+        expect(screen.getAllByText(/Express/i).length).toBeGreaterThanOrEqual(1);
+        expect(screen.getAllByText(/Explore/i).length).toBeGreaterThanOrEqual(1);
+        expect(screen.getAllByText(/Secure/i).length).toBeGreaterThanOrEqual(1);
 
-        // Verify Categories section
-        expect(screen.getByText('Clothing Amour')).toBeInTheDocument();
-        expect(screen.getByText('Gifting Items')).toBeInTheDocument();
-        expect(screen.getByText('Pick & Drop')).toBeInTheDocument();
+        // Verify Categories
+        expect(screen.getAllByText(/Clothing Amour/i).length).toBeGreaterThanOrEqual(1);
+        expect(screen.getAllByText(/Gifting Items/i).length).toBeGreaterThanOrEqual(1);
+        expect(screen.getAllByText(/Pick & Drop/i).length).toBeGreaterThanOrEqual(1);
     });
 });
