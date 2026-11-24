@@ -92,11 +92,7 @@ export default function Delivery() {
 
   useEffect(() => {
     let initInterval = setInterval(() => {
-      const condition = role === 'admin' 
-        ? (window.google && window.google.maps && mapContainerRef.current)
-        : (window.google && window.google.maps && mapContainerRef.current);
-
-      if (condition) {
+      if (window.L && mapContainerRef.current && !map.current) {
         clearInterval(initInterval);
         initializeMap();
       }
@@ -106,15 +102,16 @@ export default function Delivery() {
   }, [role]);
 
   const initializeMap = () => {
-    map.current = new window.google.maps.Map(mapContainerRef.current, {
-      center: { lat: 12.9716, lng: 77.5946 },
-      zoom: role === 'admin' ? 10 : 12,
-      disableDefaultUI: true,
-      styles: [
-        { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
-        { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
-      ],
-    });
+    if (!mapContainerRef.current || map.current) return;
+    const L = window.L;
+    map.current = L.map(mapContainerRef.current, {
+      zoomControl: true
+    }).setView([12.9716, 77.5946], role === 'admin' ? 10 : 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map.current);
 
     if (role === 'admin') {
        updateAdminMarkers();
@@ -122,43 +119,45 @@ export default function Delivery() {
   };
 
   const updateAdminMarkers = () => {
-      adminMarkers.current.forEach(m => m.setMap(null));
+      adminMarkers.current.forEach(m => {
+        if (map.current) map.current.removeLayer(m);
+      });
       adminMarkers.current = [];
-      // Admin logic here if needed
   };
 
   const updateUserMarker = (type, coords) => {
-    if (!map.current) return;
+    if (!map.current || !window.L) return;
+    const L = window.L;
+    const latlng = [coords.lat, coords.lng];
+
     if (type === "pickup") {
-      if (pickupMarker.current) pickupMarker.current.setMap(null);
-      pickupMarker.current = new window.google.maps.Marker({
-        position: coords,
-        map: map.current,
-        icon: {
-          path: window.google.maps.SymbolPath.CIRCLE,
-          fillColor: '#8b5cf6',
-          fillOpacity: 1,
-          strokeWeight: 2,
-          strokeColor: '#fff',
-          scale: 8
-        }
-      });
+      if (pickupMarker.current) map.current.removeLayer(pickupMarker.current);
+      pickupMarker.current = L.circleMarker(latlng, {
+        radius: 9,
+        fillColor: '#8b5cf6',
+        color: '#ffffff',
+        weight: 3,
+        opacity: 1,
+        fillOpacity: 1
+      }).addTo(map.current).bindPopup("Pickup Location").openPopup();
     } else {
-      if (dropMarker.current) dropMarker.current.setMap(null);
-      dropMarker.current = new window.google.maps.Marker({
-        position: coords,
-        map: map.current,
-        icon: {
-          path: window.google.maps.SymbolPath.CIRCLE,
-          fillColor: '#ef4444',
-          fillOpacity: 1,
-          strokeWeight: 2,
-          strokeColor: '#fff',
-          scale: 8
-        }
-      });
+      if (dropMarker.current) map.current.removeLayer(dropMarker.current);
+      dropMarker.current = L.circleMarker(latlng, {
+        radius: 9,
+        fillColor: '#ef4444',
+        color: '#ffffff',
+        weight: 3,
+        opacity: 1,
+        fillOpacity: 1
+      }).addTo(map.current).bindPopup("Drop Location").openPopup();
     }
-    map.current.setCenter(coords);
+
+    if (pickupMarker.current && dropMarker.current) {
+      const group = L.featureGroup([pickupMarker.current, dropMarker.current]);
+      map.current.fitBounds(group.getBounds().pad(0.2));
+    } else {
+      map.current.setView(latlng, 14);
+    }
   };
 
   useEffect(() => {

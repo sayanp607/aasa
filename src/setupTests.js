@@ -14,3 +14,22 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: () => {},
   }),
 });
+
+// Mock Leaflet for JSDOM test environment
+window.L = {
+  map: () => ({
+    setView: function() { return this; },
+    removeLayer: () => {},
+    fitBounds: () => {},
+    addLayer: () => {}
+  }),
+  tileLayer: () => ({ addTo: () => {} }),
+  circleMarker: () => ({ 
+    addTo: () => ({ 
+      bindPopup: () => ({ 
+        openPopup: () => {} 
+      }) 
+    }) 
+  }),
+  featureGroup: () => ({ getBounds: () => ({ pad: () => {} }) })
+};

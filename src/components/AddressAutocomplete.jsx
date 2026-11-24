@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import "./AddressAutocomplete.css";
 
 const AddressAutocomplete = ({ 
@@ -11,27 +12,14 @@ const AddressAutocomplete = ({
   const [inputValue, setInputValue] = useState(initialValue);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const autocompleteService = useRef(null);
-  const geocoder = useRef(null);
-  const sessionToken = useRef(null);
   const wrapperRef = useRef(null);
+  const debounceTimer = useRef(null);
 
   useEffect(() => {
     setInputValue(initialValue);
   }, [initialValue]);
 
-  const ensureGoogleServices = () => {
-    if (window.google?.maps?.places && !autocompleteService.current) {
-      autocompleteService.current = new window.google.maps.places.AutocompleteService();
-      geocoder.current = new window.google.maps.Geocoder();
-      sessionToken.current = new window.google.maps.places.AutocompleteSessionToken();
-    }
-    return !!autocompleteService.current;
-  };
-
   useEffect(() => {
-    ensureGoogleServices();
-
     const handleClickOutside = (event) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         setShowSuggestions(false);
@@ -45,50 +33,60 @@ const AddressAutocomplete = ({
     const value = e.target.value;
     setInputValue(value);
 
-    if (!value.trim()) {
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+
+    if (!value.trim() || value.trim().length < 2) {
       setSuggestions([]);
+      setShowSuggestions(false);
       return;
     }
 
-    if (ensureGoogleServices()) {
-      autocompleteService.current.getPlacePredictions(
-        {
-          input: value,
-          sessionToken: sessionToken.current,
-        },
-        (predictions, status) => {
-          if (status === window.google?.maps?.places?.PlacesServiceStatus?.OK && predictions) {
-            setSuggestions(predictions);
-            setShowSuggestions(true);
-          } else {
-            setSuggestions([]);
-          }
+    // Debounce Nominatim requests by 300ms to be polite to OSM servers
+    debounceTimer.current = setTimeout(async () => {
+      try {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(value.trim())}&addressdetails=1&limit=5`;
+        const res = await axios.get(url, {
+          headers: { 'Accept-Language': 'en' }
+        });
+        if (res.data && Array.isArray(res.data)) {
+          setSuggestions(res.data);
+          setShowSuggestions(true);
         }
-      );
+      } catch (err) {
+        console.error("OSM Geocoding Error:", err);
+      }
+    }, 300);
+  };
+
+  const handleSuggestionClick = (item) => {
+    const fullText = item.display_name;
+    setInputValue(fullText);
+    setShowSuggestions(false);
+
+    if (onSelect) {
+      onSelect({
+        address: fullText,
+        coords: {
+          lat: parseFloat(item.lat),
+          lng: parseFloat(item.lon),
+        },
+        placeId: item.place_id
+      });
     }
   };
 
-  const handleSuggestionClick = (suggestion) => {
-    setInputValue(suggestion.description);
-    setShowSuggestions(false);
+  const getMainText = (item) => {
+    if (item.name) return item.name;
+    if (item.address?.road) return item.address.road;
+    if (item.address?.suburb) return item.address.suburb;
+    return item.display_name.split(",")[0];
+  };
 
-    if (ensureGoogleServices() && geocoder.current) {
-      geocoder.current.geocode({ placeId: suggestion.place_id }, (results, status) => {
-        if (status === "OK" && results[0]) {
-          const location = results[0].geometry.location;
-          onSelect({
-            address: suggestion.description,
-            coords: {
-              lat: location.lat(),
-              lng: location.lng(),
-            },
-            placeId: suggestion.place_id
-          });
-          // Refresh session token for next search
-          sessionToken.current = new window.google.maps.places.AutocompleteSessionToken();
-        }
-      });
-    }
+  const getSecondaryText = (item) => {
+    const parts = item.display_name.split(",");
+    return parts.slice(1).join(",").trim() || item.display_name;
   };
 
   return (
@@ -107,13 +105,13 @@ const AddressAutocomplete = ({
       
       {showSuggestions && suggestions.length > 0 && (
         <ul className="autocomplete-suggestions">
-          {suggestions.map((suggestion) => (
+          {suggestions.map((item) => (
             <li
-              key={suggestion.place_id}
-              onClick={() => handleSuggestionClick(suggestion)}
+              key={item.place_id}
+              onClick={() => handleSuggestionClick(item)}
             >
-              <span className="suggestion-main">{suggestion.structured_formatting.main_text}</span>
-              <span className="suggestion-secondary">{suggestion.structured_formatting.secondary_text}</span>
+              <span className="suggestion-main">{getMainText(item)}</span>
+              <span className="suggestion-secondary">{getSecondaryText(item)}</span>
             </li>
           ))}
         </ul>
