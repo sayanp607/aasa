@@ -20,12 +20,17 @@ const AddressAutocomplete = ({
     setInputValue(initialValue);
   }, [initialValue]);
 
-  useEffect(() => {
-    if (window.google && !autocompleteService.current) {
+  const ensureGoogleServices = () => {
+    if (window.google?.maps?.places && !autocompleteService.current) {
       autocompleteService.current = new window.google.maps.places.AutocompleteService();
       geocoder.current = new window.google.maps.Geocoder();
       sessionToken.current = new window.google.maps.places.AutocompleteSessionToken();
     }
+    return !!autocompleteService.current;
+  };
+
+  useEffect(() => {
+    ensureGoogleServices();
 
     const handleClickOutside = (event) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
@@ -45,14 +50,14 @@ const AddressAutocomplete = ({
       return;
     }
 
-    if (autocompleteService.current) {
+    if (ensureGoogleServices()) {
       autocompleteService.current.getPlacePredictions(
         {
           input: value,
           sessionToken: sessionToken.current,
         },
         (predictions, status) => {
-          if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
+          if (status === window.google?.maps?.places?.PlacesServiceStatus?.OK && predictions) {
             setSuggestions(predictions);
             setShowSuggestions(true);
           } else {
@@ -67,7 +72,7 @@ const AddressAutocomplete = ({
     setInputValue(suggestion.description);
     setShowSuggestions(false);
 
-    if (geocoder.current) {
+    if (ensureGoogleServices() && geocoder.current) {
       geocoder.current.geocode({ placeId: suggestion.place_id }, (results, status) => {
         if (status === "OK" && results[0]) {
           const location = results[0].geometry.location;
